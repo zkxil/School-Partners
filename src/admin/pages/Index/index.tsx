@@ -2,7 +2,7 @@ import React, { ComponentType, useEffect, useState } from 'react'
 import { Col, Button, Icon, Row } from 'antd'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react'
-import { useStore } from '@/admin/hooks/useStore'
+import useStore from '@/admin/hooks/useStore'
 import http from '@/admin/utils/http'
 
 import './index.scss'

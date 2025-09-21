@@ -4,11 +4,11 @@
     padding: 20px;
     background: #fff;
 
-    /deep/ .ant-table {
+    ::v-deep .ant-table {
       height: calc(100vh - 250px);
     }
 
-    /deep/ .ant-table-placeholder {
+    ::v-deep .ant-table-placeholder {
       display: flex;
       flex-direction: column;
       justify-content: center;

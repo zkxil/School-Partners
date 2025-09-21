@@ -1,17 +1,21 @@
-import { observable, action } from 'mobx'
+import { makeAutoObservable } from 'mobx';
 import Taro from '@tarojs/taro'
 
 import { CourseInfo } from '../modals/courseList'
 import { ExerciseInfo } from '../modals/exerciseList'
 
 class studyStore {
-  @observable courseList: Array<CourseInfo> = [];
+  courseList: Array<CourseInfo> = [];
 
-  @observable recommendCourseList: Array<CourseInfo> = [];
+  recommendCourseList: Array<CourseInfo> = [];
 
-  @observable exerciseList: Array<ExerciseInfo>
+  exerciseList: Array<ExerciseInfo>
 
-  @observable hotExerciseList: Array<ExerciseInfo>
+  hotExerciseList: Array<ExerciseInfo>
+  constructor() {
+    // 关键：自动绑定 this 并处理响应式
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
 
   isRecommend(course: CourseInfo): boolean {
     return course.isRecommend
@@ -21,7 +25,7 @@ class studyStore {
     return course.isHot
   }
 
-  @action.bound
+
   getCourseList(): any {
     return new Promise(async (resolve, reject) => {
       try {
@@ -38,7 +42,6 @@ class studyStore {
     })
   }
 
-  @action.bound
   getExerciseList(): any {
     return new Promise(async (resolve, reject) => {
       try {

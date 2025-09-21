@@ -1,13 +1,18 @@
-import { observable, action } from 'mobx'
+import { makeAutoObservable } from 'mobx';
 import Taro from '@tarojs/taro'
 
 import { ForumInfo } from '../modals/forumList'
 
 class forumStore {
-  @observable myForumList: Array<ForumInfo> = []
-  @observable forumList: Array<ForumInfo> = []
+  myForumList: Array<ForumInfo> = []
+  forumList: Array<ForumInfo> = []
 
-  @action.bound
+
+  constructor() {
+    // 关键：自动绑定 this 并处理响应式
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
+
   getForumList(forumAuthor?: string) {
     return new Promise(async (resolve) => {
       if (forumAuthor) {

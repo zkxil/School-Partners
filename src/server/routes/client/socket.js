@@ -1,10 +1,6 @@
 const generateTime = require('../../utils/generateTime')
-const {
-  query
-} = require('../../utils/query')
-const {
-  INSERT_TABLE
-} = require('../../utils/sql');
+const { query } = require('../../utils/query')
+const { INSERT_TABLE } = require('../../utils/sql');
 
 let onlineUserSocket = {}
 let onlineUserInfo = {}
@@ -18,9 +14,9 @@ const broadcast = (message) => {
   } = message
   Object.values(onlineUserSocket).forEach((socket) => {
     socket.send(JSON.stringify({
-      ...message, 
+      ...message,
       // isMyself: userName === onlineUserInfo[socket.socketId].userName
-      isMyself:openid === onlineUserInfo[socket.socketId].openid
+      isMyself: openid === onlineUserInfo[socket.socketId].openid
     }))
   })
 }

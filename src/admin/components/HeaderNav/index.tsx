@@ -3,7 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { Menu, Dropdown, Icon, message } from 'antd'
 import { observer } from 'mobx-react'
 
-import { useStore } from '@/admin/hooks/useStore'
+import useStore from '@/admin/hooks/useStore'
 
 import './index.scss'
 

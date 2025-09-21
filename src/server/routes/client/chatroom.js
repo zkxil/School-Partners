@@ -1,7 +1,5 @@
-const router = require('koa-router')()
-const {
-  query
-} = require('../../utils/query')
+const Router = require('koa-router');
+const { query } = require('../../utils/query');
 const {
   QUERY_TABLE,
   INSERT_TABLE,
@@ -11,6 +9,7 @@ const {
 const parse = require('../../utils/parse')
 const formatTime = require('../../utils/formatTime')
 
+const router = new Router();
 router.get('/chatlog', async (ctx) => {
   const response = []
   const res = await query(QUERY_TABLE('chatlog'));

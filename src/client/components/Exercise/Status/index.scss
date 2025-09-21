@@ -1,4 +1,4 @@
-@import '../../../styles/iconfont';
+@use '../../../styles/iconfont';
 
 .dark {
   background: #333;
@@ -23,7 +23,7 @@
 }
 
 .setting-open {
-  transform: translate3d(0, -16em, 0);  
+  transform: translate3d(0, -16em, 0);
 }
 
 .exam-status {

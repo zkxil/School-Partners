@@ -1,7 +1,8 @@
 import React from 'react'
 import { Route, Redirect } from 'react-router-dom'
-import { useStore } from '@/admin/hooks/useStore'
 import { message } from 'antd'
+
+import useStore from '@/admin/hooks/useStore'
 
 interface IProps {
   component: any,

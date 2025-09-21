@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx'
+import { makeAutoObservable } from 'mobx';
 import Taro from '@tarojs/taro'
 
 interface UserInfo {
@@ -12,8 +12,8 @@ interface UserInfo {
 }
 
 class infoStore {
-  @observable openid: string = ''
-  @observable userInfo: UserInfo = {
+  openid: string = ''
+  userInfo: UserInfo = {
     avatarUrl: '',
     city: '',
     country: '',
@@ -22,9 +22,13 @@ class infoStore {
     nickName: '',
     province: '',
   }
-  @observable isLogin: boolean = false
+  isLogin: boolean = false
 
-  @action.bound
+  constructor() {
+    // 关键：自动绑定 this 并处理响应式
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
+
   handleUserLogin(): any {
     return new Promise(async (resolve) => {
       try {
@@ -73,12 +77,10 @@ class infoStore {
     })
   }
 
-  @action.bound
   setUserInfo(userInfo: UserInfo): any {
     this.userInfo = userInfo
   }
 
-  @action.bound
   setIsLogin(isLogin: boolean): any {
     this.isLogin = isLogin
   }

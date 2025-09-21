@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx'
+import { makeAutoObservable } from 'mobx';
 import Taro from '@tarojs/taro'
 import formatTime from '../utils/formatTime'
 
@@ -11,19 +11,24 @@ class chatroomStore {
   timeoutTimer: any = null
   reConnectCount: number = 3
 
-  @observable openid: string = ''
-  @observable socketTask: any = null
-  @observable socketId: string = ''
-  @observable userName: string = ''
-  @observable userAvatar: string = ''
-  @observable isReconnected: boolean = false
+  openid: string = ''
+  socketTask: any = null
+  socketId: string = ''
+  userName: string = ''
+  userAvatar: string = ''
+  isReconnected: boolean = false
 
   /* 消息部分 */
-  @observable messageList: MessageList = {}
-  @observable scrollViewId: string = ''
+  messageList: MessageList = {}
+  scrollViewId: string = ''
 
   /* 联系人部分 */
-  @observable contactsList: ContactsInfo[] = []
+  contactsList: ContactsInfo[] = []
+
+  constructor() {
+    // 关键：自动绑定 this 并处理响应式
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
 
   generateSocketId(): void {
     this.socketId = new Date().getTime() + '' + Math.ceil(Math.random() * 100)
@@ -136,7 +141,7 @@ class chatroomStore {
     }))
   }
 
-  @action.bound
+
   async setContactsList() {
     return new Promise(async (resolve, reject) => {
       try {
@@ -153,20 +158,20 @@ class chatroomStore {
     })
   }
 
-  @action.bound
+
   handleMessageSend(messageInfo: SendMessageInfo): void {
     const socketTask: any = this.socketTask
     socketTask.send({ data: JSON.stringify(messageInfo) })
   }
 
-  @action.bound
+
   setLatestScrollViewId(to: string) {
     const messageInfo = this.messageList[to]
     const { messageId } = messageInfo[messageInfo.length - 1]
     this.scrollViewId = messageId
   }
 
-  @action.bound
+
   setUserInfo() {
     return new Promise(async (resolve) => {
       const { userInfo: { nickName, avatarUrl } } = await Taro.getUserInfo()
@@ -186,7 +191,7 @@ class chatroomStore {
     }, 3000)
   }
 
-  @action.bound
+
   async socketConnect(openid: string) {
     console.log('emmm')
     console.log(openid)

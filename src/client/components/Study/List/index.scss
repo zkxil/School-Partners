@@ -1,4 +1,4 @@
-@import '../../../styles/iconfont';
+@use '../../../styles/iconfont';
 
 .list-container {
   padding: 0 1em;
@@ -53,7 +53,7 @@
   }
 }
 
-.list-loading{
+.list-loading {
   position: relative;
   height: 150px;
 }

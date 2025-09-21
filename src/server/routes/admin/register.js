@@ -1,9 +1,10 @@
-const router = require('koa-router')()
+const Router = require('koa-router');
 const { query } = require('../../utils/query')
 const { INSERT_TABLE } = require('../../utils/sql')
 const { getRandomSalt, getEncrypt } = require('../../utils/encrypt')
 const { generateToken } = require('../../utils/token')
 
+const router = new Router();
 router.post('/register', async (ctx) => {
   const { username, password, phone, email } = ctx.request.body
   const responseBody = {

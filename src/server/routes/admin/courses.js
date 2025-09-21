@@ -1,9 +1,10 @@
-const router = require('koa-router')()
+const Router = require('koa-router');
 const { query } = require('../../utils/query')
 const { QUERY_TABLE, INSERT_TABLE, UPDATE_TABLE_MULTI } = require('../../utils/sql');
 const { getJWTPayload } = require('../../utils/token')
 const parse = require('../../utils/parse')
 
+const router = new Router();
 router.get('/courses', async (ctx) => {
   const responseData = []
   const responseBody = {

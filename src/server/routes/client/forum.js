@@ -1,10 +1,10 @@
-const router = require('koa-router')()
-const { query } = require('../../utils/query')
+const Router = require('koa-router');
+const { query } = require('../../utils/query');
 const { QUERY_TABLE, INSERT_TABLE, UPDATE_TABLE, DELETE_TABLE } = require('../../utils/sql');
 const parse = require('../../utils/parse')
 const computeTimeAgo = require('../../utils/computeTimeAgo')
 
-
+const router = new Router();
 router.get('/forums', async (ctx) => {
   const response = []
   const res = await query(QUERY_TABLE('forum_list'));

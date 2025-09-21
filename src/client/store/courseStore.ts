@@ -1,10 +1,10 @@
-import { observable, action } from 'mobx'
+import { makeAutoObservable } from 'mobx';
 import Taro from '@tarojs/taro'
 
 import { CourseInfo } from '../modals/courseDetail'
 
 class courseStore {
-  @observable courseDetail: CourseInfo = {
+  courseDetail: CourseInfo = {
     courseAuthor: '',
     publishDate: '',
     courseViews: 0,
@@ -13,7 +13,11 @@ class courseStore {
     courseRate: 0
   }
 
-  @action.bound
+  constructor() {
+    // 关键：自动绑定 this 并处理响应式
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
+
   getCourseDetail(id: number, title: string): any {
     return new Promise(async (resolve) => {
       Taro.showLoading({

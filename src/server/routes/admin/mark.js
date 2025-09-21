@@ -1,4 +1,4 @@
-const router = require('koa-router')()
+const Router = require('koa-router');
 const {
   query
 } = require('../../utils/query')
@@ -6,6 +6,7 @@ const {
   getJWTPayload
 } = require('../../utils/token')
 
+const router = new Router();
 router.get('/mark/paper/getExercises', async (ctx) => {
   try {
     const {
@@ -27,7 +28,7 @@ router.get('/mark/paper/getExercises', async (ctx) => {
     topicList.forEach((item, index) => {
       const {
         topicType = 1,
-          topicContent = ''
+        topicContent = ''
       } = item
 
       if (topicType === 3) {

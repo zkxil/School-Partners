@@ -1,8 +1,8 @@
-const router = require('koa-router')()
-const {
-  query
-} = require('../../utils/query')
+const Router = require('koa-router');
+const { query } = require('../../utils/query');
 const axios = require('axios')
+
+const router = new Router();
 const {
   appId,
   appSecret

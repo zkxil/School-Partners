@@ -1,7 +1,8 @@
-const router = require('koa-router')()
+const Router = require('koa-router');
 const { getJWTPayload } = require('../../utils/token')
 const { query } = require('../../utils/query')
 
+const router = new Router();
 router.get('/info', async (ctx) => {
   const payload = getJWTPayload(ctx.headers.authorization)
   const { username, userId } = payload

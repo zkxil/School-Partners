@@ -1,4 +1,5 @@
 import { useContext } from 'react'
-import { storeContext } from '@/admin/contexts'
+import storeContext from '@/admin/contexts'
 
-export const useStore = () => useContext(storeContext)
+const useStore = () => useContext(storeContext)
+export default useStore

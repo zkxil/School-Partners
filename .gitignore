@@ -5,3 +5,5 @@ deploy_versions/
 node_modules/
 .DS_Store
 src/server/config/
+npminstall-debug.log
+yarn-error.log

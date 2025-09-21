@@ -30,7 +30,7 @@ const config = {
   },
   // 小程序配置从 weapp 改为 mini，可以删掉很多小配置
   mini: {
-    webpackChain (chain, webpack) {},
+    webpackChain(chain, webpack) { },
     cssLoaderOption: {},
     postcss: {
       pxtransform: {
@@ -45,11 +45,13 @@ const config = {
       }
     }
   },
+  // 关键：添加 framework 字段，指定为 'react'
+  framework: 'react',
   // 可以删掉很多小配置
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
-    webpackChain (chain, webpack) {},
+    webpackChain(chain, webpack) { },
     postcss: {
       autoprefixer: {
         enable: true,

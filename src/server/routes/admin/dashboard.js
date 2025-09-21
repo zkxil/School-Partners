@@ -1,8 +1,9 @@
-const router = require('koa-router')()
+const Router = require('koa-router');
 const { query } = require('../../utils/query')
 const { getJWTPayload } = require('../../utils/token')
 const { QUERY_TABLE } = require('../../utils/sql')
 
+const router = new Router();
 router.get('/dashboard', async (ctx) => {
   const responseBody = {
     code: 0,

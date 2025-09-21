@@ -1,6 +1,7 @@
 import { createContext } from 'react'
-import { UserInfoStore } from '@/admin/store'
+import UserInfoStore from '@/admin/store'
 
-export const storeContext = createContext({
+const storeContext = createContext({
   userInfoStore: new UserInfoStore()
 })
+export default storeContext;

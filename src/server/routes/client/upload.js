@@ -1,15 +1,10 @@
-const router = require('koa-router')()
+
+const Router = require('koa-router');
 const qiniu = require('qiniu')
-const {
-  scope,
-  accessKey,
-  secretKey
-} = require('../../config/qiniu_config');
-const {
-  query
-} = require('../../utils/query')
+const { scope, accessKey, secretKey } = require('../../config/qiniu_config');
+const { query } = require('../../utils/query')
 
-
+const router = new Router();
 router.post('/upload', async (ctx) => {
   /* 接收formData数据 */
   const {

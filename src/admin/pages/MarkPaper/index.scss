@@ -1,4 +1,4 @@
-@import '../../styles/iconfont.scss';
+@use '../../styles/iconfont.scss';
 
 .mark-paper {
   &__container {
@@ -40,7 +40,7 @@
     background: #333;
     z-index: 999;
 
-    /deep/ .ant-spin-text {
+    ::v-deep .ant-spin-text {
       margin-top: 16px;
     }
   }

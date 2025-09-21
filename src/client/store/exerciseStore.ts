@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx'
+import { makeAutoObservable } from 'mobx'; // 推荐使用现代 API
 import Taro from '@tarojs/taro'
 import { TopicList } from '../modals/exerciseDetail'
 
@@ -19,28 +19,31 @@ const themeList: Array<{ theme: string, title: string, icon: string }> = [
 ];
 
 class exerciseStore {
-  @observable fontSize: string = 'normal';
-  @observable fontSizeId: number = 2;
-  @observable settingOpened: boolean = false;
-  @observable theme: string = 'light';
-  @observable themeList: Array<{ theme: string, title: string, icon: string }> = themeList
+  fontSize: string = 'normal';
+  fontSizeId: number = 2;
+  settingOpened: boolean = false;
+  theme: string = 'light';
+  themeList: Array<{ theme: string, title: string, icon: string }> = themeList
 
-  @observable emptyPage: number = 0;
-  @observable isFinished: boolean = false
-  @observable isSubmitted: boolean = false
-  @observable currentPage: number = 0;
-  @observable totalPage: number = 0;
-  @observable exerciseCid: string = '';
-  @observable topicList: TopicList[] = [];
+  emptyPage: number = 0;
+  isFinished: boolean = false
+  isSubmitted: boolean = false
+  currentPage: number = 0;
+  totalPage: number = 0;
+  exerciseCid: string = '';
+  topicList: TopicList[] = [];
   // 题目的标准答案
-  @observable exerciseAnswers: Array<Array<number>> = [];
+  exerciseAnswers: Array<Array<number>> = [];
   // 用户选择的答案
-  @observable optionStatus: Array<Array<number>> = []
+  optionStatus: Array<Array<number>> = []
   // 用户做对的题数
-  @observable correctCount: number = 0
-  @observable exerciseId: number = 0
+  correctCount: number = 0
+  exerciseId: number = 0
+  constructor() {
+    // 关键：自动绑定 this 并处理响应式
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
 
-  @action.bound
   resetExerciseDetail(): void {
     this.topicList = []
     this.exerciseAnswers = []
@@ -53,7 +56,7 @@ class exerciseStore {
     this.isSubmitted = false
   }
 
-  @action.bound
+
   getExerciseDetail(cid: number): any {
     this.exerciseId = cid
 
@@ -80,29 +83,29 @@ class exerciseStore {
     })
   }
 
-  @action.bound
+
   setFontSize(sizeId: number = 2): void {
     if (sizeId > 4 || sizeId < 0) return;
     this.fontSizeId = sizeId;
     this.fontSize = ['smaller', 'small', 'normal', 'large', 'larger'][sizeId]
   }
 
-  @action.bound
+
   setTheme(theme: string = 'light'): void {
     this.theme = theme;
   }
 
-  @action.bound
+
   setSettingOpened(): void {
     this.settingOpened = !this.settingOpened
   }
 
-  @action.bound
+
   setCurrentPage(current: number = 0): void {
     this.currentPage = current;
   }
 
-  @action.bound
+
   handleOptionClick(number: number, index: number): void {
     if (this.isSubmitted) return
     if (this.topicList[number].topicType === 1) {
@@ -114,7 +117,7 @@ class exerciseStore {
 
   }
 
-  @action.bound
+
   handleConfirmClick(): void {
     if (this.isSubmitted) return
     if (!this.isFinished) {

@@ -1,7 +1,8 @@
-const router = require('koa-router')()
+const Router = require('koa-router');
 const { query } = require('../../utils/query')
 const { QUERY_TABLE } = require('../../utils/sql');
 
+const router = new Router();
 router.get('/tags', async (ctx) => {
   const responseData = []
   const responseBody = {
@@ -11,7 +12,7 @@ router.get('/tags', async (ctx) => {
   try {
     const res = await query(QUERY_TABLE('tag_list'));
     res.map((item, index) => {
-      const { id,tag_name } = item
+      const { id, tag_name } = item
       responseData[index] = {
         id,
         tagName: tag_name
