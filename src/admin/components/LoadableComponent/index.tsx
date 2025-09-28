@@ -1,8 +1,8 @@
-import React, { useEffect, FC } from 'react'
-import Loadable from 'react-loadable'
+import React, { FC, useEffect, Suspense, lazy } from 'react'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
+// 加载中的页面
 const LoadingPage: FC = () => {
   useEffect(() => {
     NProgress.start()
@@ -10,14 +10,21 @@ const LoadingPage: FC = () => {
       NProgress.done()
     }
   }, [])
-  return (
-    <div className="load-component" />
-  )
+
+  return <div className="load-component" />
 }
 
-const LoadableComponent = (component: () => Promise<any>) => Loadable({
-  loader: component,
-  loading: () => <LoadingPage />,
-})
+// 封装动态加载组件
+const LoadableComponent = (importFunc: () => Promise<{ default: React.ComponentType<any> }>) => {
+  const LazyComponent = lazy(importFunc)
+
+  const Wrapper: FC = (props) => (
+    <Suspense fallback={<LoadingPage />}>
+      <LazyComponent {...props} />
+    </Suspense>
+  )
+
+  return Wrapper
+}
 
 export default LoadableComponent

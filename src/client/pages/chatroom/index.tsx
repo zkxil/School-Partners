@@ -34,7 +34,7 @@ class ChatRoom extends Component<IProps, IState> {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { title, to } = this.$router.params
     const { chatroomStore: { setLatestScrollViewId, messageList } } = this.props
     console.log(messageList[to])

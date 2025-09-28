@@ -1,5 +1,6 @@
 import React, { ComponentType, useEffect, useState } from 'react'
-import { Col, Button, Icon, Row } from 'antd'
+import { Col, Button, Row } from 'antd'
+import { BookOutlined, PieChartOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react'
 import useStore from '@/admin/hooks/useStore'
@@ -90,7 +91,7 @@ const Index = (props: any) => {
           <Row className="data__content" type="flex" justify="space-between">
             <Col span={7} className="data__wrap">
               <div className="title">
-                <Icon type="book" style={{ color: '#66a6ff' }} />
+                <BookOutlined style={{ color: '#66a6ff' }} />
                   &nbsp;本周考试日程
                   <div className="description">
                   请提醒学生进行考试哦，以免挂科^_^
@@ -100,7 +101,7 @@ const Index = (props: any) => {
             </Col>
             <Col span={7} className="data__wrap">
               <div className="title">
-                <Icon type="pie-chart" style={{ color: '#66a6ff' }} />
+                <PieChartOutlined style={{ color: '#66a6ff' }} />
                   &nbsp;学习情况分析
                   <div className="description">
                   学生最近学习时间的情况分析
@@ -109,7 +110,7 @@ const Index = (props: any) => {
             </Col>
             <Col span={7} className="data__wrap">
               <div className="title">
-                <Icon type="carry-out" style={{ color: '#66a6ff' }} />
+                <CheckCircleOutlined style={{ color: '#66a6ff' }} />
                   &nbsp;课程任务列表
                   <div className="description">
                   以下是您布置的课程任务嘿嘿嘿

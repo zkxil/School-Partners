@@ -41,7 +41,7 @@ class DashBoard extends Component<IProps, IState> {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const { infoStore: { handleUserLogin, getUserInfo, userInfo } } = this.props
     // if (userInfo.avatarUrl !== '') {
     //   this.setState({ isLoading: false })

@@ -29,7 +29,7 @@ class MyForums extends Component<IProps, IStates>{
     this.handleModifyClick = this.handleModifyClick.bind(this)
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     const { title } = this.$router.params
     const { infoStore: { userInfo }, forumStore: { getForumList } } = this.props
     const { nickName } = userInfo

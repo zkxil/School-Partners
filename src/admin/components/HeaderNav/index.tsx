@@ -1,48 +1,58 @@
-import React, { FC, useEffect, useState } from 'react'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { Menu, Dropdown, Icon, message } from 'antd'
+import React, { FC } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Menu, Dropdown, message } from 'antd'
+import { UserOutlined, SettingOutlined, PoweroffOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 
 import useStore from '@/admin/hooks/useStore'
-
 import './index.scss'
 
-const HeaderNav: FC<RouteComponentProps> = (props: RouteComponentProps) => {
+const HeaderNav: FC = () => {
   const { userInfoStore } = useStore()
   const { username } = userInfoStore
+  const navigate = useNavigate()
 
+  // 退出登录
   const handleLogout = () => {
-    const { history } = props
     message.success('退出成功')
     localStorage.removeItem('token')
-    history.push('/login')
+    navigate('/login') // React Router v6 替换 history.push
   }
 
-  const menu = (
-    <Menu>
-      <Menu.Item>
-        <Icon type="user" />
-        个人信息
-      </Menu.Item>
-      <Menu.Item>
-        <Icon type="setting" />
-        管理设置
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item onClick={handleLogout}>
-        <Icon type="poweroff" />
-        退出登录
-      </Menu.Item>
-    </Menu>
-  )
+  // Antd v4 Dropdown + Menu 写法
+  const menuItems = [
+    {
+      key: '1',
+      label: (
+        <span>
+          <UserOutlined /> 个人信息
+        </span>
+      ),
+    },
+    {
+      key: '2',
+      label: (
+        <span>
+          <SettingOutlined /> 管理设置
+        </span>
+      ),
+    },
+    { type: 'divider' },
+    {
+      key: '3',
+      label: (
+        <span onClick={handleLogout}>
+          <PoweroffOutlined /> 退出登录
+        </span>
+      ),
+    },
+  ]
 
   return (
     <div className="header__container">
       <div className="header__wrap">
-        <div className="logo">
-          School-Partners
-        </div>
-        <Dropdown overlay={menu}>
+        <div className="logo">School-Partners</div>
+        <Dropdown menu={{ items: menuItems }}>
           <div className="info">
             <span>{username}</span>
             <img src="http://cdn.algbb.cn/avatar" width="35" height="35" />
@@ -53,5 +63,4 @@ const HeaderNav: FC<RouteComponentProps> = (props: RouteComponentProps) => {
   )
 }
 
-
-export default withRouter(observer(HeaderNav))
+export default observer(HeaderNav)

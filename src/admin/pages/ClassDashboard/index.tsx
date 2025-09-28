@@ -4,8 +4,7 @@ import { observer } from 'mobx-react'
 import useStore from '@/admin/hooks/useStore';
 import http from '@/admin/utils/http'
 import { CustomBreadcrumb } from '@/admin/components'
-import { RouteComponentProps } from 'react-router-dom';
-import { FormComponentProps } from 'antd/lib/form';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
   Form,
   Input,
@@ -13,12 +12,12 @@ import {
   Row,
   Switch,
   Button,
-  Icon,
   Tooltip,
   message,
   Upload,
   Select
 } from 'antd';
+import { RedoOutlined, QuestionCircleOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   ClassNameRules,
   ClassTagsRules,
@@ -28,14 +27,6 @@ import {
 import './index.scss'
 
 const { Option } = Select;
-
-type classProps = RouteComponentProps & FormComponentProps
-
-interface FormLayout {
-  labelCol: object,
-  wrapperCol: object,
-  labelAlign?: 'left' | 'right' | undefined
-}
 
 interface TagInfo {
   id: number,
@@ -53,7 +44,8 @@ interface ClassInfo {
   isChecked: boolean
 }
 
-const ClassDashboard: FC<classProps> = (props: classProps) => {
+const ClassDashboard: FC = () => {
+  const [form] = Form.useForm()  // <-- 这里替换 Form.create
   const [classCode, setClassCode] = useState<string>('')
   const [classAvatar, setClassAvatar] = useState<string>('http://cdn.algbb.cn/emoji/32.png')
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -72,21 +64,19 @@ const ClassDashboard: FC<classProps> = (props: classProps) => {
   const { userInfoStore } = useStore()
   const { setIsActived } = userInfoStore
 
-  const { form } = props
-  const { getFieldDecorator } = form
-  const formLayout: FormLayout = {
-    labelCol: {
-      span: 4
-    },
-    wrapperCol: {
-      span: 15,
-      offset: 1
-    }
+  // React Router v6 Hooks 替代 RouteComponentProps
+  const navigate = useNavigate();
+  const params = useParams();
+  const location = useLocation();
+
+  const formLayout = {
+    labelCol: { span: 4 },
+    wrapperCol: { span: 15, offset: 1 }
   }
 
   const uploadButton = (
     <div>
-      <Icon type={isLoading ? 'loading' : 'plus'} />
+      {isLoading ? <LoadingOutlined /> : <PlusOutlined />}
       <div className="ant-upload-text">Upload</div>
     </div>
   );
@@ -103,36 +93,33 @@ const ClassDashboard: FC<classProps> = (props: classProps) => {
 
   const getClassInfo = async () => {
     const { data: { classInfo } } = await http.get('/classes')
-    const { classCode } = classInfo
-    setClassCode(classCode)
+    setClassCode(classInfo.classCode)
     setClassInfo(classInfo)
+    form.setFieldsValue(classInfo)  // 初始化值
   }
 
   const handleFormSubmit = (event: FormEvent) => {
     event.preventDefault()
-
-    const { form } = props
-    const { setFields, validateFieldsAndScroll } = form
-    if (!classCode) {
-      setFields({ classCode: { errors: [new Error('请生成课程随机码')] } })
-    }
-    validateFieldsAndScroll(async (err, values) => {
-      if (!err) {
-        const { className, classTeacher, classTag, isChecked } = values
-        const { data: { msg } } = await http.put('/classes', {
-          className,
-          classTeacher,
-          classTag,
-          classCode,
-          classAvatar,
-          isChecked
-        })
-        setIsActived(true)
-        message.success(msg)
+    form.validateFields().then(async values => {
+      if (!classCode) {
+        form.setFields([{ name: 'classCode', errors: ['请生成课程随机码'] }])
+        return
       }
+      const { className, classTeacher, classTag, isChecked } = values
+      const { data: { msg } } = await http.put('/classes', {
+        className,
+        classTeacher,
+        classTag,
+        classCode,
+        classAvatar,
+        isChecked
+      })
+      setIsActived(true)
+      message.success(msg)
+    }).catch(err => {
+      console.log('Validation Failed:', err)
     })
   }
-
 
   const getBase64 = (img: File, callback: any) => {
     const reader = new FileReader();
@@ -161,14 +148,10 @@ const ClassDashboard: FC<classProps> = (props: classProps) => {
   }
 
   const handleRandomClick = () => {
-    const { form } = props
-    const { setFields } = form
-
     const randomList: string = '0123456789QWERTYUIOPASDFGHJKLZXCVBNM'
     const randomCode: string = randomList.split('').sort(() => Math.random() - 0.5).join('').slice(0, 6)
-
-    setFields({ classCode: { values: randomCode } })
     setClassCode(randomCode)
+    form.setFieldsValue({ classCode: randomCode })  // 设置值
   }
 
   return (
@@ -176,90 +159,47 @@ const ClassDashboard: FC<classProps> = (props: classProps) => {
       <CustomBreadcrumb list={['班级建设', '班级管理']} />
       <div className="class-dashboard__container">
         <div className="form__title">班级信息</div>
-        <Form layout="horizontal" {...formLayout} hideRequiredMark>
-          <Form.Item label="班级名称">
-            {getFieldDecorator('className', {
-              rules: ClassNameRules,
-              initialValue: classInfo.className
-            })(<Input />)}
+        <Form form={form} layout="horizontal" {...formLayout} hideRequiredMark>
+          <Form.Item label="班级名称" name="className" rules={ClassNameRules}>
+            <Input />
           </Form.Item>
-          <Form.Item label="班级老师">
-            {getFieldDecorator('classTeacher', {
-              rules: ClassTeacherRules,
-              initialValue: classInfo.classTeacher
-            })(<Input />)}
+          <Form.Item label="班级老师" name="classTeacher" rules={ClassTeacherRules}>
+            <Input />
           </Form.Item>
           <Row>
             <Col span={12}>
-              <Form.Item label="班级标签" labelCol={{
-                span: 8
-              }} wrapperCol={{
-                span: 10,
-                offset: 2
-              }}>
-                {getFieldDecorator('classTag', {
-                  rules: ClassTagsRules,
-                  initialValue: classInfo.classTag
-                })(<Select >
-                  {tagList.map((tag: TagInfo) => {
-                    const { id, tagName } = tag
-                    return (
-                      <Option key={id} value={id}>{tagName}</Option>
-                    )
-                  })}
-                </Select>)}
+              <Form.Item label="班级标签" name="classTag" labelCol={{ span: 8 }} wrapperCol={{ span: 10, offset: 2 }} rules={ClassTagsRules}>
+                <Select>
+                  {tagList.map((tag: TagInfo) => <Option key={tag.id} value={tag.id}>{tag.tagName}</Option>)}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="班级代码" labelCol={{
-                span: 4
-              }} wrapperCol={{
-                span: 10,
-                offset: 2
-              }}>
-                {getFieldDecorator('classCode', {
-                })(
-                  <div className="class-dashboard__code">
-                    {classCode}
-                    <Tooltip title="刷新">
-                      <Icon className="icon" type="redo" onClick={handleRandomClick} />
-                    </Tooltip>
-                  </div>
-                )}
+              <Form.Item label="班级代码" name="classCode" labelCol={{ span: 4 }} wrapperCol={{ span: 10, offset: 2 }}>
+                <div className="class-dashboard__code">
+                  {classCode}
+                  <Tooltip title="刷新">
+                    <RedoOutlined className="icon" onClick={handleRandomClick} />
+                  </Tooltip>
+                </div>
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item label={
-            <span>
-              开启审核&nbsp;
-              <Tooltip title="是否允许任何人通过输入班级代码加入班级">
-                <Icon type="question-circle" />
-              </Tooltip>
-            </span>
-          }>
-            {getFieldDecorator('isChecked', {
-              initialValue: classInfo.isChecked,
-              valuePropName: 'checked'
-            })(
-              <Switch />
-            )}
+          <Form.Item label={<span>开启审核&nbsp;<Tooltip title="是否允许任何人通过输入班级代码加入班级"><QuestionCircleOutlined /></Tooltip></span>} name="isChecked" valuePropName="checked">
+            <Switch />
           </Form.Item>
-          <Form.Item label="班级头像">
-            {getFieldDecorator('classAvatar', {
-
-            })(
-              <Upload
-                name="avatar"
-                listType="picture-card"
-                className="avatar-uploader"
-                showUploadList={false}
-                beforeUpload={beforeUpload}
-                customRequest={handleAvatarUpload}
-                accept=".png,.jpg,.jpeg"
-              >
-                {classAvatar ? <img src={classAvatar} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-              </Upload>
-            )}
+          <Form.Item label="班级头像" name="classAvatar">
+            <Upload
+              name="avatar"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
+              beforeUpload={beforeUpload}
+              customRequest={handleAvatarUpload}
+              accept=".png,.jpg,.jpeg"
+            >
+              {classAvatar ? <img src={classAvatar} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+            </Upload>
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 5 }}>
@@ -271,4 +211,4 @@ const ClassDashboard: FC<classProps> = (props: classProps) => {
   )
 }
 
-export default Form.create({ name: 'classForm' })(observer(ClassDashboard)) as ComponentType
+export default observer(ClassDashboard) as ComponentType

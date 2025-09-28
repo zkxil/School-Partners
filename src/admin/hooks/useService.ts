@@ -80,9 +80,12 @@ const useServiceCallback = (fetchConfig: FetchConfig) => {
           setResponse(Object.assign({}, response))
         })
         .catch((error: any) => {
-          const { response: { data } } = error
-          const { data: { msg } } = data
-          message.error(msg)
+          // 使用可选链安全地获取 msg，如果任何一级为 undefined 则返回 undefined
+          const msg = error?.response?.data?.data?.msg;
+
+          // 如果获取不到 msg，提供一个默认的错误信息
+          const errorMessage = msg || '请求失败，请稍后重试';
+          message.error(errorMessage)
           setIsLoading(false)
           setError(Object.assign({}, error))
         })

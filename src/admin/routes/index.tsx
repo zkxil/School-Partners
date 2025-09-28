@@ -1,20 +1,31 @@
 import React from 'react'
-import {
-  Switch, Redirect, Route,
-} from 'react-router-dom'
-
+import { Routes, Route, Navigate } from 'react-router-dom'
 import PrivateRoute from '../components/PrivateRoute'
 import { Login, Register } from '../pages'
 import Main from '../components/Main/index'
 
-const Routes = () => (
-  <Switch>
-    <Route exact path="/login" component={Login} />
-    <Route exact path="/register" component={Register} />
-    <PrivateRoute component={Main} path="/admin" />
+const AppRoutes: React.FC = () => (
+  <Routes>
+    {/* 公共路由 */}
+    <Route path="/login" element={<Login />} />
+    <Route path="/register" element={<Register />} />
 
-    <Redirect exact from="/" to="/admin" />
-  </Switch>
+    {/* 私有路由 */}
+    <Route
+      path="/admin/*"
+      element={
+        <PrivateRoute >
+          <Main /> {/* Main 内再处理 /admin/* 的子路由 */}
+        </PrivateRoute>
+      }
+    />
+
+    {/* 默认跳转 */}
+    <Route path="/" element={<Navigate to="/admin" replace />} />
+
+    {/* 可选：未匹配路由 */}
+    <Route path="*" element={<div>404 Not Found</div>} />
+  </Routes>
 )
 
-export default Routes
+export default AppRoutes

@@ -8,11 +8,11 @@ import {
   Empty,
   message,
   Switch,
-  Tooltip,
-  Icon
+  Tooltip
 } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { ColumnProps } from 'antd/es/table'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { CustomBreadcrumb } from '@/admin/components'
 import { generateDifficulty, generateExamType } from '@/admin/utils/common'
 import { FetchConfig } from '@/admin/modals/http'
@@ -24,25 +24,27 @@ message.config({
 })
 import './index.scss'
 
-const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
-  const [currentPage, setCurrentPage] = useState<number>(0)
+const ExamList: FC = () => {
+  const navigate = useNavigate() // React Router v6 替代 history
+  // 当前页从 1 开始
+  const [currentPage, setCurrentPage] = useState<number>(1)
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [fetchConfig, setFetchConfig] = useState<FetchConfig>({
     url: '', method: 'GET', params: {}, config: {}
   })
   const [fetchFlag, setFetchFlag] = useState<number>(0)
+  const [switchLoading, setSwitchLoading] = useState<number[]>([])
   const hasSelected: boolean = selectedRowKeys.length > 0
-  const { history } = props
 
+  // 触发数据请求
   useEffect(() => {
-    const fetchConfig: FetchConfig = {
+    setFetchConfig({
       url: '/exams',
       method: 'GET',
       params: {},
       config: {}
-    }
-    setFetchConfig(Object.assign({}, fetchConfig))
+    })
   }, [fetchFlag])
 
   const handleSelectedChange = (selectedRowKeys: number[]) => {
@@ -55,7 +57,7 @@ const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
   }
 
   const handleEditClick = (id: number) => {
-    history.push(`/admin/content/exam-modify/${id}`)
+    navigate(`/admin/content/exam-modify/${id}`) // v6 使用 navigate
   }
 
   const handleDeleteClick = async (id: number) => {
@@ -74,10 +76,13 @@ const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     message.success(msg)
   }
 
+  // 切换考试开关
   const handleOpenChange = async (examId: number) => {
+    setSwitchLoading(prev => [...prev, examId])
     const { data: { msg } } = await http.put(`/exams/status/${examId}`, {})
     message.success(msg)
     setFetchFlag(fetchFlag + 1)
+    setSwitchLoading(prev => prev.filter(id => id !== examId))
   }
 
   const rowSelection = {
@@ -131,14 +136,20 @@ const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
   }, {
     title: <span>
       是否开启&nbsp;
-        <Tooltip title="倒计时的考试，开启后立即开始考试">
-        <Icon type="info-circle" />
+      <Tooltip title="倒计时的考试，开启后立即开始考试">
+        <InfoCircleOutlined />
       </Tooltip>
     </span>,
     dataIndex: 'isOpen',
     key: 'isOpen',
     width: 120,
-    render: (isOpen, row) => <Switch checked={isOpen} onChange={() => handleOpenChange(row.id)} />,
+    render: (isOpen, row) => (
+      <Switch
+        checked={isOpen}
+        loading={switchLoading.includes(row.id)}
+        onChange={() => handleOpenChange(row.id)}
+      />
+    ),
   }, {
     title: '操作',
     dataIndex: '',
@@ -159,17 +170,18 @@ const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
         </Popconfirm>
       </span>
     )
-  }
-  ]
+  }]
+
   const { isLoading = false, response } = useService(fetchConfig)
   const { data = {} } = response || {}
   const { examList = [], total: totalPage = 0 } = data
+
   return (
     <div>
       <CustomBreadcrumb list={['内容管理', '考试管理']} />
       <div className="exam-list__container">
         <div className="exam-list__header">
-          <Button type="primary" style={{ marginRight: 10 }} onClick={() => { history.push('/admin/content/exam-publish') }}>新增考试</Button>
+          <Button type="primary" style={{ marginRight: 10 }} onClick={() => { navigate('/admin/content/exam-publish') }}>新增考试</Button>
           <Popconfirm
             disabled={!hasSelected}
             title="确定删除这些考试吗?"
@@ -185,21 +197,16 @@ const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             value={searchValue}
             placeholder="请输入要查询的考试名称"
             onChange={handleSearchChange}
-            enterButton />
+            enterButton
+          />
         </div>
         <Table
           rowSelection={rowSelection}
           dataSource={examList}
           columns={columns}
           rowKey="id"
-          scroll={{
-            y: "calc(100vh - 300px)"
-          }}
-          loading={{
-            spinning: isLoading,
-            tip: "加载中...",
-            size: "large"
-          }}
+          scroll={{ y: "calc(100vh - 300px)" }}
+          loading={{ spinning: isLoading, tip: "加载中...", size: "large" }}
           pagination={{
             pageSize: 10,
             total: totalPage,
@@ -207,9 +214,7 @@ const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             onChange: (pageNo) => setCurrentPage(pageNo)
           }}
           locale={{
-            emptyText: <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="暂无数据" />
+            emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无数据" />
           }}
         />
       </div>
@@ -217,4 +222,4 @@ const ExamList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
   )
 }
 
-export default withRouter(ExamList)
+export default ExamList

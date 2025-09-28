@@ -4,95 +4,51 @@ import { message } from 'antd'
 const instance = axios.create({
   baseURL: '/api',
   timeout: 10000,
-  headers: {
-    'Content-Type': "application/json;charset=utf-8",
-  },
+  headers: { 'Content-Type': "application/json;charset=utf-8" },
 })
 
 instance.interceptors.request.use(
   config => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers.common['Authorization'] = token;
+      config.headers['Authorization'] = token;
     }
     return config
   },
-  error => {
-    return Promise.reject(error)
-  }
+  error => Promise.reject(error)
 )
 
 instance.interceptors.response.use(
-  res => {
-    let { data, status } = res
-    if (status === 200) {
-      return data
-    }
-    return Promise.reject(data)
-  },
+  res => res, // 返回完整响应
   error => {
-    const { response: { status } } = error
-    switch (status) {
-      case 401:
-        localStorage.removeItem('token')
-        window.location.href = './#/login'
-        break;
-      case 504:
-        message.error('代理请求失败')
+    if (error.response) {
+      const { status, data } = error.response
+      switch (status) {
+        case 401:
+          localStorage.removeItem('token')
+          window.location.href = './#/login'
+          break
+        case 504:
+          message.error('代理请求失败')
+          break
+        default:
+          message.error(data?.msg || '请求出错')
+      }
     }
     return Promise.reject(error)
   }
 )
 
-const get = (url: string, options?: object): Promise<any> => {
-  return new Promise(async (resolve, reject) => {
-    instance.get(url, options).then((data) => {
-      resolve(data)
-    }).catch(({ response }) => {
-      const { data: { data } } = response
-      message.error(data.msg)
-      return reject(response)
-    })
-  })
-}
+const get = (url: string, options?: object) =>
+  instance.get(url, options).then(res => res.data)
 
-const post = (url: string, params: object, options?: object): Promise<any> => {
-  return new Promise(async (resolve, reject) => {
-    instance.post(url, params, options).then(data => {
-      resolve(data)
-    }).catch(({ response }) => {
-      const { data: { data } } = response
-      message.error(data.msg)
-      return reject(response)
-    })
-  })
-}
+const post = (url: string, params: object, options?: object) =>
+  instance.post(url, params, options).then(res => res.data)
 
-const put = (url: string, params: object, options?: object): Promise<any> => {
-  return new Promise(async (resolve, reject) => {
-    instance.put(url, params, options).then(data => {
-      resolve(data)
-    }).catch(({ response }) => {
-      const { data: { data } } = response
-      message.error(data.msg)
-      return reject(response)
-    })
-  })
-}
+const put = (url: string, params: object, options?: object) =>
+  instance.put(url, params, options).then(res => res.data)
 
-export default {
-  get,
-  post,
-  put,
-  delete: (url: string, options?: object): Promise<any> => {
-    return new Promise(async (resolve, reject) => {
-      instance.delete(url, options).then((data) => {
-        resolve(data)
-      }).catch(({ response }) => {
-        const { data: { data } } = response
-        message.error(data.msg)
-        return reject()
-      })
-    })
-  }
-}
+const del = (url: string, options?: object) =>
+  instance.delete(url, options).then(res => res.data)
+
+export default { get, post, put, delete: del }

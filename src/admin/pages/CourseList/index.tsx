@@ -1,17 +1,17 @@
 import React, { FC, useState, useEffect, ChangeEvent } from 'react'
-import { Table, Button, Popconfirm, Tag, Input, Empty, message } from 'antd';
+import { Table, Button, Popconfirm, Input, Empty, message } from 'antd';
 import { ColumnProps } from 'antd/es/table'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { CustomBreadcrumb } from '@/admin/components'
-import { CourseList } from '@/admin/modals/courseList'
+import { CourseList as CourseItem } from '@/admin/modals/courseList'
 import { FetchConfig } from '@/admin/modals/http'
 import { useService } from '@/admin/hooks'
 import http from '@/admin/utils/http'
+import { useNavigate } from 'react-router-dom' // React Router v6 Hook
 
 import './index.scss'
 
-const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
-  const [currentPage, setCurrentPage] = useState<number>(0)
+const CourseList: FC = () => {
+  const [currentPage, setCurrentPage] = useState<number>(1) // Antd pagination 从1开始
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([])
   const [searchValue, setSearchValue] = useState<string>('')
   const [fetchConfig, setFetchConfig] = useState<FetchConfig>({
@@ -19,31 +19,37 @@ const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
   })
   const [fetchFlag, setFetchFlag] = useState<number>(0)
   const hasSelected: boolean = selectedRowKeys.length > 0
-  const { history } = props
 
+  const navigate = useNavigate() // 替代 history
+
+  // 初始化表格请求配置
   useEffect(() => {
-    const fetchConfig: FetchConfig = {
+    const config: FetchConfig = {
       url: '/courses',
       method: 'GET',
       params: {},
       config: {}
     }
-    setFetchConfig(Object.assign({}, fetchConfig))
+    setFetchConfig(Object.assign({}, config))
   }, [fetchFlag])
 
+  // 选中行变化
   const handleSelectedChange = (selectedRowKeys: number[]) => {
     setSelectedRowKeys(selectedRowKeys)
   }
 
+  // 搜索框变化
   const handleSearchChange = (changeEvent: ChangeEvent<HTMLInputElement>) => {
     const { target: { value } } = changeEvent
     setSearchValue(value)
   }
 
+  // 编辑课程
   const handleEditClick = (courseId: number) => {
-    history.push(`/admin/content/course-modify/${courseId}`)
+    navigate(`/admin/content/course-modify/${courseId}`)
   }
 
+  // 删除单个课程
   const handleDeleteClick = async (courseId: number) => {
     const { data: { msg } } = await http.delete(`/courses/${courseId}`)
     setFetchFlag(fetchFlag + 1)
@@ -51,6 +57,7 @@ const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     message.success(msg)
   }
 
+  // 批量删除
   const handleBatchDelete = async () => {
     const { data: { msg } } = await http.delete(`/courses`, {
       data: selectedRowKeys
@@ -65,7 +72,7 @@ const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
     onChange: handleSelectedChange,
   }
 
-  const columns: ColumnProps<CourseList>[] = [
+  const columns: ColumnProps<CourseItem>[] = [
     {
       title: '课程名称',
       dataIndex: 'courseName',
@@ -92,7 +99,7 @@ const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
       key: 'publishDate',
       width: 120,
       render: publishDate => new Date(publishDate).toLocaleDateString(),
-      sorter: (a, b) => a.publishDate - b.publishDate
+      sorter: (a, b) => new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime()
     }, {
       title: '是否推荐',
       dataIndex: 'isRecommend',
@@ -116,21 +123,23 @@ const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             okText="确定"
             cancelText="取消"
           >
-            <Button type="danger">删除</Button>
+            <Button type="primary" danger>删除</Button>
           </Popconfirm>
         </span>
       )
     }
   ]
+
   const { isLoading = false, response } = useService(fetchConfig)
   const { data = {} } = response || {}
   const { courseList = [], total: totalPage = 0 } = data
+
   return (
     <div>
       <CustomBreadcrumb list={['内容管理', '课程管理']} />
       <div className="course-list__container">
         <div className="course-list__header">
-          <Button type="primary" style={{ marginRight: 10 }} onClick={() => { history.push('/admin/content/course-publish') }}>新增课程</Button>
+          <Button type="primary" style={{ marginRight: 10 }} onClick={() => { navigate('/admin/content/course-publish') }}>新增课程</Button>
           <Popconfirm
             disabled={!hasSelected}
             title="确定删除这些课程吗?"
@@ -138,7 +147,7 @@ const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
             okText="确定"
             cancelText="取消"
           >
-            <Button type="danger" disabled={!hasSelected}>批量删除</Button>
+            <Button type="primary" danger disabled={!hasSelected}>批量删除</Button>
           </Popconfirm>
 
           <Input.Search
@@ -178,4 +187,4 @@ const CourseList: FC<RouteComponentProps> = (props: RouteComponentProps) => {
   )
 }
 
-export default withRouter(CourseList)
+export default CourseList

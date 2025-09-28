@@ -1,27 +1,17 @@
 import React from 'react'
-import { Route, Redirect } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { isAuthenticated } from '../../utils/session'
 
-interface IProps {
-  component: any,
-  path: string
+interface PrivateRouteProps {
+  children: React.ReactNode
 }
 
-const PrivateRoute = ({ component: Component, path }: IProps) => (
-  <Route
-    path={path}
-    render={(props) => (
-      !!isAuthenticated()
-        ? <Component {...props} />
-        : (
-          <Redirect to={{
-            pathname: '/login',
-            state: { from: props.location },
-          }}
-          />
-        )
-    )}
-  />
-)
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+  const location = useLocation()
+  console.log('PrivateRoute location', location)
+
+  // ✅ 返回 children，不要再额外 Navigate
+  return isAuthenticated() ? <>{children}</> : <Navigate to="/login" replace />
+}
 
 export default PrivateRoute

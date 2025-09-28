@@ -1,11 +1,5 @@
 import React, { FC } from 'react'
-import {
-  withRouter,
-  Switch,
-  Redirect,
-  RouteComponentProps,
-  Route
-} from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import {
   Index,
   ExerciseList,
@@ -26,28 +20,52 @@ import {
 
 import './index.scss'
 
-const ContentMain: FC<RouteComponentProps> = () => {
+const ContentMain: FC = () => {
   return (
     <div className="main__container">
-      <Switch>
-        <Route exact path="/admin" component={Index} />
-        <RestrictRoute exact path="/admin/content/exercise-list" component={ExerciseList} />
-        <RestrictRoute exact path="/admin/content/exercise-publish" component={ExercisePublish} />
-        <RestrictRoute exact path="/admin/content/exercise-modify/:id" component={ExerciseModify} />
-        <RestrictRoute exact path="/admin/content/course-list/" component={CourseList} />
-        <RestrictRoute exact path="/admin/content/course-publish/" component={CoursePublish} />
-        <RestrictRoute exact path="/admin/content/course-modify/:id/" component={CourseModify} />
-        <RestrictRoute exact path="/admin/content/exam-list/" component={ExamList} />
-        <RestrictRoute exact path="/admin/content/exam-publish/" component={ExamPublish} />
-        <RestrictRoute exact path="/admin/content/exam-modify/:id" component={ExamModify} />
-        <RestrictRoute exact path="/admin/content/mark-paper/" component={MarkPaper} />
+      <Routes>
+        <Route path="" element={Index} />
+        {/* 内容管理 */}
+        <Route path="content/exercise-list" element={
+          <RestrictRoute><ExerciseList /></RestrictRoute>
+        } />
+        <Route path="content/exercise-publish" element={
+          <RestrictRoute><ExercisePublish /></RestrictRoute>
+        } />
+        <Route path="content/exercise-modify/:id" element={
+          <RestrictRoute><ExerciseModify /></RestrictRoute>
+        } />
+        <Route path="content/course-list" element={
+          <RestrictRoute><CourseList /></RestrictRoute>
+        } />
+        <Route path="content/course-publish" element={
+          <RestrictRoute><CoursePublish /></RestrictRoute>
+        } />
+        <Route path="content/course-modify/:id" element={
+          <RestrictRoute><CourseModify /></RestrictRoute>
+        } />
+        <Route path="content/exam-list" element={
+          <RestrictRoute><ExamList /></RestrictRoute>
+        } />
+        <Route path="content/exam-publish" element={
+          <RestrictRoute><ExamPublish /></RestrictRoute>
+        } />
+        <Route path="content/exam-modify/:id" element={
+          <RestrictRoute><ExamModify /></RestrictRoute>
+        } />
+        <Route path="content/mark-paper" element={
+          <RestrictRoute><MarkPaper /></RestrictRoute>
+        } />
+        {/* 班级建设 */}
+        <Route path="class/class-dashboard" element={
+          <RestrictRoute><ClassDashboard /></RestrictRoute>
+        } />
 
-        <Route exact path="/admin/class/class-dashboard" component={ClassDashboard} />
-
-        <Redirect exact from="/" to="/admin" />
-      </Switch>
+        <Route path="" element={<Navigate to="/admin" replace />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
     </div>
   )
 }
 
-export default withRouter(ContentMain)
+export default ContentMain

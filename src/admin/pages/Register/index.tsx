@@ -1,53 +1,47 @@
-import React, { ComponentType, useState, useCallback, MouseEvent, FC, FormEvent } from 'react'
-import { Form, message } from 'antd'
-import { FormComponentProps } from 'antd/lib/form'
-import { RouteComponentProps, Link } from 'react-router-dom'
+import React, { useState, useCallback } from 'react'
+import { Form, Input, message } from 'antd'
+import { useNavigate, Link } from 'react-router-dom'
 import { useService } from '@/admin/hooks'
 import { FetchConfig } from '@/admin/modals/http'
 
 import './index.scss'
 
-type RegisterProps = RouteComponentProps & FormComponentProps
-
-const Register: FC<RegisterProps> = (props: RegisterProps) => {
+const Register: React.FC = () => {
   const [isModalOpened, setIsModalOpened] = useState(false)
   const [fetchConfig, setFetchConfig] = useState<FetchConfig>({
     url: '', method: 'GET', params: {}, config: {}
   })
   const { response = {} } = useService(fetchConfig)
-  const { getFieldDecorator } = props.form
   const { code = 0, data = {} } = response || {}
 
+  const [form] = Form.useForm()
+  const navigate = useNavigate()
+
+  /* 注册成功 */
   if (code === 200) {
     const { msg, token } = data
     localStorage.setItem('token', token)
     message.success(msg)
-    props.history.push('/admin')
+    navigate('/admin')
   }
 
   const handleMaskClick = useCallback(
-    (e: MouseEvent) => {
+    (e: React.MouseEvent) => {
       e.stopPropagation()
       setIsModalOpened(false)
     },
-    [isModalOpened]
+    []
   )
 
-  const handleFormSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    const { form } = props
-    form.validateFields(async (err, values) => {
-      if (!err) {
-        const { username, password, phone, email } = values
-        const registerConfig: FetchConfig = {
-          url: '/register',
-          method: 'POST',
-          params: { username, password, phone, email },
-          config: {}
-        }
-        setFetchConfig(Object.assign({}, registerConfig))
-      }
-    })
+  const handleFormFinish = (values: any) => {
+    const { username, password, phone, email } = values
+    const registerConfig: FetchConfig = {
+      url: '/register',
+      method: 'POST',
+      params: { username, password, phone, email },
+      config: {}
+    }
+    setFetchConfig({ ...registerConfig })
   }
 
   return (
@@ -66,46 +60,47 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
           </div>
           <div className="form__container">
             <div className="form__title">欢迎注册<br />School-Partners</div>
-            <Form onSubmit={handleFormSubmit}>
-              <Form.Item>
-                {getFieldDecorator('username', {
-                  rules: [{ required: true, message: '请输入用户名!' }],
-                })(
-                  <div className="form__wrap">
-                    <i className="form__icon iconfont icon-yonghu" />
-                    <input className="form__input" placeholder="用户名" />
-                  </div>
-                )}
+            <Form
+              form={form}
+              onFinish={handleFormFinish}
+              layout="vertical"
+            >
+              <Form.Item
+                name="username"
+                rules={[{ required: true, message: '请输入用户名!' }]}
+              >
+                <Input
+                  placeholder="用户名"
+                  prefix={<i className="form__icon iconfont icon-yonghu" />}
+                />
               </Form.Item>
-              <Form.Item>
-                {getFieldDecorator('password', {
-                  rules: [{ required: true, message: '请输入密码!' }],
-                })(
-                  <div className="form__wrap">
-                    <i className="form__icon iconfont icon-mima" />
-                    <input className="form__input" type="password" placeholder="密码" />
-                  </div>
-                )}
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: '请输入密码!' }]}
+              >
+                <Input.Password
+                  placeholder="密码"
+                  prefix={<i className="form__icon iconfont icon-mima" />}
+                  onPressEnter={() => form.submit()}
+                />
               </Form.Item>
-              <Form.Item>
-                {getFieldDecorator('phone', {
-                  rules: [{ required: true, message: '请输入手机号!' }],
-                })(
-                  <div className="form__wrap">
-                    <i className="form__icon iconfont icon-shouji" />
-                    <input className="form__input" placeholder="手机号" />
-                  </div>
-                )}
+              <Form.Item
+                name="phone"
+                rules={[{ required: true, message: '请输入手机号!' }]}
+              >
+                <Input
+                  placeholder="手机号"
+                  prefix={<i className="form__icon iconfont icon-shouji" />}
+                />
               </Form.Item>
-              <Form.Item>
-                {getFieldDecorator('email', {
-                  rules: [{ required: true, message: '请输入邮箱!' }],
-                })(
-                  <div className="form__wrap">
-                    <i className="form__icon iconfont icon-youxiang" />
-                    <input className="form__input" placeholder="邮箱" />
-                  </div>
-                )}
+              <Form.Item
+                name="email"
+                rules={[{ required: true, message: '请输入邮箱!' }]}
+              >
+                <Input
+                  placeholder="邮箱"
+                  prefix={<i className="form__icon iconfont icon-youxiang" />}
+                />
               </Form.Item>
               <button className="form__button" type="submit">立即注册</button>
             </Form>
@@ -119,4 +114,4 @@ const Register: FC<RegisterProps> = (props: RegisterProps) => {
   )
 }
 
-export default Form.create({ name: 'registerForm' })(Register) as ComponentType
+export default Register

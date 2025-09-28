@@ -27,7 +27,7 @@ class CourseDetail extends Component<IProps, IState> {
     this.handleVideoClick = this.handleVideoClick.bind(this)
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
   }
 
   handleVideoClick() {

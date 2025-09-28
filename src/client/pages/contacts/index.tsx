@@ -24,7 +24,7 @@ class Contacts extends Component<IProps, IState> {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
 
   }
 

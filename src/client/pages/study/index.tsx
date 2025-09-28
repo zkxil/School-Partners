@@ -35,7 +35,7 @@ class Study extends Component<IProps, IState> {
     }
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     Taro.showLoading({
       title: '加载中...'
     })
