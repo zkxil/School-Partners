@@ -1,4 +1,4 @@
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const { query } = require('../../utils/query')
 const { INSERT_TABLE } = require('../../utils/sql')
 const { getRandomSalt, getEncrypt } = require('../../utils/encrypt')

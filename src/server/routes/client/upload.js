@@ -1,5 +1,5 @@
 
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const qiniu = require('qiniu')
 const { scope, accessKey, secretKey } = require('../../config/qiniu_config');
 const { query } = require('../../utils/query')

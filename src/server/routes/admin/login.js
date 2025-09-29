@@ -1,4 +1,4 @@
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const parse = require('../../utils/parse')
 const { query } = require('../../utils/query')
 const { getEncrypt } = require('../../utils/encrypt')

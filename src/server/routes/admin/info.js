@@ -1,4 +1,4 @@
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const { getJWTPayload } = require('../../utils/token')
 const { query } = require('../../utils/query')
 

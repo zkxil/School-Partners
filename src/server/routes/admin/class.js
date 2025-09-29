@@ -1,4 +1,4 @@
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const { query } = require('../../utils/query')
 const { UPDATE_TABLE_MULTI } = require('../../utils/sql');
 const { getJWTPayload } = require('../../utils/token')

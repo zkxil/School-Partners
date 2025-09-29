@@ -1,4 +1,4 @@
-const Router = require('koa-router');
+const Router = require('@koa/router');
 const { query } = require('../../utils/query');
 const { QUERY_TABLE } = require('../../utils/sql');
 const parse = require('../../utils/parse')
