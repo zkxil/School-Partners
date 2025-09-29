@@ -165,7 +165,7 @@ const ExerciseList: FC = () => {
             okText="确定"
             cancelText="取消"
           >
-            <Button type="danger" disabled={!hasSelected}>批量删除</Button>
+            <Button danger={true} disabled={!hasSelected}>批量删除</Button>
           </Popconfirm>
 
           {/* 搜索框 */}

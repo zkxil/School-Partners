@@ -1,35 +1,52 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es2020",
+    "module": "esnext",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "types": [
+      "react/jsx-runtime"
+    ],
     "removeComments": false,
     "preserveConstEnums": true,
     "moduleResolution": "node",
+    // "ignoreDeprecations": "6.0",
+    "resolveJsonModule": true,
     "outDir": "lib",
     "noUnusedParameters": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "rootDirs": ["src", "webpack"],
-    "jsx": "react",
+    "rootDirs": [
+      "src",
+      "webpack"
+    ],
     "allowJs": true,
-    "resolveJsonModule": true,
     "typeRoots": [
       "node_modules/@types",
-      "global.d.ts"
+      "global.d.ts",
+      "src"
     ],
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
     "importHelpers": true,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
-    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     }
   },
+  "typeRoots": [
+    "node_modules/@types"
+  ],
+  "include": [
+    "src"
+  ], // 👈 显式声明
   "exclude": [
     "node_modules",
     "dist"

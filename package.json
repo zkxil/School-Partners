@@ -28,9 +28,7 @@
   "author": "BB小天使",
   "license": "MIT",
   "dependencies": {
-    "@ant-design/icons": "^4.8.3",
-    "@babel/preset-env": "^7.28.3",
-    "@babel/preset-react": "^7.27.1",
+    "@ant-design/icons": "^5.6.1",
     "@koa/router": "^14.0.0",
     "@tarojs/components": "2.2.15",
     "@tarojs/components-qa": "2.2.15",
@@ -48,8 +46,7 @@
     "@tarojs/taro-swan": "2.2.15",
     "@tarojs/taro-tt": "2.2.15",
     "@tarojs/taro-weapp": "2.2.15",
-    "@types/react-router-dom": "^5.1.3",
-    "antd": "^4.24.16",
+    "antd": "^5.27.4",
     "axios": "^1.12.2",
     "babel-runtime": "^6.26.0",
     "css-minimizer-webpack-plugin": "^7.0.2",
@@ -74,11 +71,12 @@
     "react-router-dom": "^6.30.1",
     "regenerator-runtime": "0.11.1",
     "taro-ui": "^2.2.1",
-    "ts-import-plugin": "^1.6.1",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
     "@tarojs/mini-runner": "2.2.15",
     "@tarojs/plugin-babel": "2.0.3",
@@ -89,12 +87,13 @@
     "@tarojs/plugin-terser": "2.2.15",
     "@tarojs/plugin-uglifyjs": "2.0.3",
     "@tarojs/webpack-runner": "2.2.15",
-    "@types/react": "^16.4.6",
-    "@types/react-dom": "^19.1.9",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
     "@types/webpack-env": "^1.13.6",
     "@typescript-eslint/eslint-plugin": "^7.17.0",
     "@typescript-eslint/parser": "^7.17.0",
     "babel-loader": "^8.0.6",
+    "babel-plugin-import": "^1.13.8",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-transform-jsx-stylesheet": "^0.6.5",
@@ -125,12 +124,18 @@
     "stylelint": "9.3.0",
     "stylelint-config-taro-rn": "2.2.15",
     "stylelint-taro-rn": "2.2.15",
-    "ts-loader": "^9",
-    "typescript": "^3.7.2",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.2",
     "url-loader": "^2.1.0",
     "webpack": "^5.101.3",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.2",
     "webpack-merge": "^5.10.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^18.3.24",
+      "@types/react-dom": "^18.3.7"
+    }
   }
 }

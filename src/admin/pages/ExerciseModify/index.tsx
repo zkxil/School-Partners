@@ -229,7 +229,7 @@ const ExerciseModify: FC = () => {
             <Divider />
 
             {/* 题目列表 */}
-            {topicList.map((topic, index) => (
+            {topicList.map((topic: TopicList, index: number) => (
               <Fragment key={index}>
                 <div className="form__subtitle">
                   第{index + 1}题
@@ -252,7 +252,7 @@ const ExerciseModify: FC = () => {
                       <span />
                     </Form.Item>
                     <Form.Item label={<span>题目类型&nbsp;<Tooltip title="目前支持单选、多选及文件上传题"><InfoCircleOutlined /></Tooltip></span>} name={['topicList', index, 'topicType']} rules={TopicTypeRules} initialValue={topic.topicType}>
-                      <Select onChange={(value) => handleTopicTypeChange(value, index)}>
+                      <Select onChange={(value: number) => handleTopicTypeChange(value, index)}>
                         <Option value={1}>单选</Option>
                         <Option value={2}>多选</Option>
                         <Option value={3}>文件上传题</Option>
@@ -261,9 +261,9 @@ const ExerciseModify: FC = () => {
                   </Col>
                   <Col span={12} hidden={topic.isUpload}>
                     <Form.Item label="正确答案" name={['topicList', index, 'topicAnswer']} rules={topic.isUpload ? [{ required: false }] : TopicAnswerRules} initialValue={topic.topicAnswer}>
-                      <Checkbox.Group style={{ width: '100%' }} onChange={(values) => handleTopicAnswerChange(values as number[], index)}>
+                      <Checkbox.Group style={{ width: '100%' }} onChange={(values: number[]) => handleTopicAnswerChange(values, index)}>
                         <Row>
-                          {['A', 'B', 'C', 'D'].map((option, idx) => (
+                          {['A', 'B', 'C', 'D'].map((option: string, idx: number) => (
                             <Col span={6} key={idx}>
                               <Checkbox value={idx + 1}>选项{option}</Checkbox>
                             </Col>
@@ -275,7 +275,7 @@ const ExerciseModify: FC = () => {
                 </Row>
 
                 <Row gutter={32} hidden={topic.isUpload}>
-                  {['A', 'B', 'C', 'D'].map((option, idx) => (
+                  {['A', 'B', 'C', 'D'].map((option: string, idx: number) => (
                     <Col span={12} key={idx}>
                       <Form.Item label={`选项${option}`} name={['topicList', index, 'topicOptions', idx]} rules={topic.isUpload ? [{ required: false }] : TopicOptionRules} initialValue={topic.topicOptions[idx]}>
                         <Input />

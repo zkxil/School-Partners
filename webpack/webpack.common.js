@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const tsImportPluginFactory = require('ts-import-plugin');
+// const tsImportPluginFactory = require('ts-import-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
 const resolve = dir => path.join(__dirname, dir);
 
@@ -30,15 +30,15 @@ module.exports = {
         loader: 'ts-loader',
         options: {
           transpileOnly: true,
-          getCustomTransformers: () => ({
-            before: [tsImportPluginFactory({
-              libraryName: 'antd',
-              libraryDirectory: 'es',
-              style: "css"
-            })]
-          }),
+          // getCustomTransformers: () => ({
+          //   before: [tsImportPluginFactory({
+          //     libraryName: 'antd',
+          //     libraryDirectory: 'es',
+          //     style: "css"
+          //   })]
+          // }),
           compilerOptions: {
-            module: 'es2015'
+            // module: 'es2020'
           }
         },
         exclude: /node_modules/

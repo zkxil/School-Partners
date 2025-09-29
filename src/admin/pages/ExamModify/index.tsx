@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState, useEffect } from 'react'
+import React, { FC, Fragment, useState, useEffect, ReactElement } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { CustomBreadcrumb } from '@/admin/components'
 import {
@@ -302,7 +302,7 @@ const ExamModify: FC = () => {
             </Form.Item>
             <Divider />
             {/* 新增题目 */}
-            {topicList && topicList.map((topic, index) => (
+            {topicList && topicList.map((topic: TopicList, index: number) => (
               <Fragment key={index}>
                 <div className="form__subtitle">
                   第{index + 1}题
@@ -320,7 +320,7 @@ const ExamModify: FC = () => {
                 <Row gutter={32}>
                   <Col span={12}>
                     <Form.Item label={<span>题目类型&nbsp;<Tooltip title="目前仅支持单选及多选"><InfoCircleOutlined /></Tooltip></span>} name={['topicList', index, 'topicType']} rules={TopicTypeRules}>
-                      <Select onChange={(value) => handleTopicTypeChange(value, index)}>
+                      <Select onChange={(value: number) => handleTopicTypeChange(value, index)}>
                         <Option value={1}>单选</Option>
                         <Option value={2}>多选</Option>
                       </Select>
@@ -328,9 +328,9 @@ const ExamModify: FC = () => {
                   </Col>
                   <Col span={12}>
                     <Form.Item label="正确答案" name={['topicList', index, 'topicAnswer']} rules={TopicAnswerRules}>
-                      <Checkbox.Group style={{ width: '100%' }} onChange={(values) => handleTopicAnswerChange(values, index)}>
+                      <Checkbox.Group style={{ width: '100%' }} onChange={(values: any[]) => handleTopicAnswerChange(values, index)}>
                         <Row>
-                          {['A', 'B', 'C', 'D'].map((option, idx) => (
+                          {['A', 'B', 'C', 'D'].map((option: string, idx: number) => (
                             <Col span={6} key={idx}>
                               <Checkbox value={idx + 1}>选项{option}</Checkbox>
                             </Col>
@@ -341,7 +341,7 @@ const ExamModify: FC = () => {
                   </Col>
                 </Row>
                 <Row gutter={32}>
-                  {['A', 'B', 'C', 'D'].map((option, idx) => (
+                  {['A', 'B', 'C', 'D'].map((option: string, idx: number) => (
                     <Col span={12} key={idx}>
                       <Form.Item label={`选项${option}`} name={['topicList', index, 'topicOptions', idx]} rules={TopicOptionRules}>
                         <Input />

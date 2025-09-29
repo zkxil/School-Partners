@@ -108,7 +108,6 @@ const SiderNav: FC = () => {
         selectedKeys={selectedKeys} // 动态高亮选中的菜单
         openKeys={openedKeys} // 控制展开的 SubMenu
         onOpenChange={handleMenuChange} // 展开/收起回调
-        onClick={handleMenuClick} // 添加点击事件
         items={items} // 菜单配置
       />
     </Sider>

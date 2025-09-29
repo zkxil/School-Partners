@@ -1,4 +1,4 @@
-import React, { ComponentType, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Layout } from 'antd';
 
 import useStore from '@/admin/hooks/useStore'
@@ -36,4 +36,4 @@ const Main = () => {
 }
 
 
-export default Main as ComponentType
+export default Main

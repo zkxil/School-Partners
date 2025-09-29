@@ -252,7 +252,7 @@ const ExamPublish: FC = () => {
           <Divider />
 
           <Form.Item label="新增题目">
-            {topicList.map((topic, index) => (
+            {topicList.map((_, index: number) => (
               <Fragment key={index}>
                 <div className="form__subtitle">
                   第{index + 1}题
@@ -287,7 +287,7 @@ const ExamPublish: FC = () => {
                       rules={TopicTypeRules}
                       initialValue={1}
                     >
-                      <Select onChange={(value) => handleTopicTypeChange(value, index)}>
+                      <Select onChange={(value: number) => handleTopicTypeChange(value, index)}>
                         <Option value={1}>单选</Option>
                         <Option value={2}>多选</Option>
                       </Select>
@@ -302,10 +302,10 @@ const ExamPublish: FC = () => {
                     >
                       <Checkbox.Group
                         style={{ width: '100%' }}
-                        onChange={(values) => handleTopicAnswerChange(values as number[], index)}
+                        onChange={(values: number[]) => handleTopicAnswerChange(values, index)}
                       >
                         <Row>
-                          {['A', 'B', 'C', 'D'].map((option, idx) => (
+                          {['A', 'B', 'C', 'D'].map((option: string, idx: number) => (
                             <Col span={6} key={idx}>
                               <Checkbox value={idx + 1}>选项{option}</Checkbox>
                             </Col>
@@ -317,7 +317,7 @@ const ExamPublish: FC = () => {
                 </Row>
 
                 <Row gutter={32}>
-                  {['A', 'B', 'C', 'D'].map((option, idx) => (
+                  {['A', 'B', 'C', 'D'].map((option: string, idx: number) => (
                     <Col span={12} key={idx}>
                       <Form.Item
                         name={['topicList', index, 'topicOptions', idx]}

@@ -205,7 +205,7 @@ const MarkPaper: FC = () => {
                   placeholder="请选择题库"
                   onChange={handleExerciseIdChange}
                 >
-                  {exerciseList.map(item => (
+                  {exerciseList.map((item: ExerciseListProps) => (
                     <Option value={item.id} key={item.id}>{item.exerciseName}</Option>
                   ))}
                 </Select>
@@ -221,7 +221,7 @@ const MarkPaper: FC = () => {
                   placeholder="请选择题目"
                   onChange={handleExerciseIndexChange}
                 >
-                  {exerciseIndexList.map(item => (
+                  {exerciseIndexList.map((item: ExerciseIndexList) => (
                     <Option value={item.index} key={item.index}>第{item.index + 1}题</Option>
                   ))}
                 </Select>
@@ -237,7 +237,7 @@ const MarkPaper: FC = () => {
                   style={{ width: '100%', margin: '10px 0 20px 0' }}
                   onChange={handleExerciseStudentChange}
                 >
-                  {exerciseStudentList.map(item => (
+                  {exerciseStudentList.map((item: ExerciseStudentList) => (
                     <Option value={item.studentId} key={item.studentId}>{item.studentName}</Option>
                   ))}
                 </Select>
