@@ -1,8 +1,10 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const tsImportPluginFactory = require('ts-import-plugin');
-const devMode = process.env.NODE_ENV !== 'production';
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const reactRefreshTs = require('react-refresh-typescript');
+
+const isDev = process.env.NODE_ENV !== 'production';
 const resolve = dir => path.join(__dirname, dir);
 
 module.exports = {
@@ -15,85 +17,67 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: "[name].css",
-    })
+    }),
+    ...(isDev ? [new ReactRefreshWebpackPlugin()] : [])
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-    alias: {
-      '@': resolve('../src')
-    }
+    alias: { '@': resolve('../src') }
   },
   module: {
     rules: [
       {
         test: /\.(jsx|tsx|js|ts)$/,
-        loader: 'ts-loader',
-        options: {
-          transpileOnly: true,
-          // getCustomTransformers: () => ({
-          //   before: [tsImportPluginFactory({
-          //     libraryName: 'antd',
-          //     libraryDirectory: 'es',
-          //     style: "css"
-          //   })]
-          // }),
-          compilerOptions: {
-            // module: 'es2020'
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              ...(isDev
+                ? {
+                  getCustomTransformers: () => ({
+                    before: [
+                      reactRefreshTs.default ? reactRefreshTs.default() : reactRefreshTs()
+                    ]
+                  })
+                }
+                : {}),
+              compilerOptions: { module: 'esnext' }
+            }
           }
-        },
-        exclude: /node_modules/
+        ]
       },
       {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: { plugins: [] }
-            }
-          },
+          { loader: "postcss-loader", options: { postcssOptions: { plugins: [] } } },
           'sass-loader',
         ],
       },
-      {
-        test: /\.html$/,
-        use: [
-          {
-            loader: 'html-loader',
-            options: { minimize: true },
-          },
-        ],
-      },
+      { test: /\.html$/, use: [{ loader: 'html-loader', options: { minimize: true } }] },
       {
         test: /\.(png|jpg|gif|jpeg|svg)$/i,
         type: 'asset',
-        parser: {
-          dataUrlCondition: { maxSize: 500 }
-        },
-        generator: {
-          filename: 'images/[name][ext]'
-        }
+        parser: { dataUrlCondition: { maxSize: 500 } },
+        generator: { filename: 'images/[name][ext]' }
       }
     ]
   },
   output: {
     path: path.resolve(__dirname, '../output'),
-    filename: devMode ? '[name].[hash:8].js' : '[name].[chunkhash:8].js',
-    chunkFilename: devMode ? '[name].[hash:8].js' : '[name].[chunkhash:8].js',
-    clean: true, // Webpack 5 内置清理
+    filename: isDev ? '[name].[hash:8].js' : '[name].[chunkhash:8].js',
+    chunkFilename: isDev ? '[name].[hash:8].js' : '[name].[chunkhash:8].js',
+    clean: true,
   },
   optimization: {
     runtimeChunk: 'single',
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all'
-        }
+        vendor: { test: /[\\/]node_modules[\\/]/, name: 'vendors', chunks: 'all' }
       }
     }
   }
