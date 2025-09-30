@@ -24,7 +24,7 @@ const ContentMain: FC = () => {
   return (
     <div className="main__container">
       <Routes>
-        <Route path="" element={Index} />
+        <Route path="" element={<Index />} />
         {/* 内容管理 */}
         <Route path="content/exercise-list" element={
           <RestrictRoute><ExerciseList /></RestrictRoute>
