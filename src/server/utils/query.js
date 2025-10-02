@@ -1,21 +1,11 @@
-const mysql = require('mysql');
+const mysql = require('mysql2/promise');
 const MYSQL_CONFIG = require('../config/mysql_config.js');
 
 const pool = mysql.createPool(MYSQL_CONFIG);
 
-const query = (sql, val) => {
-  return new Promise((resolve, reject) => {
-    pool.getConnection((err, connection) => {
-      if (err) reject(err)
-      else {
-        connection.query(sql, val, (err, res) => {
-          if (err) reject(err)
-          else resolve(res);
-          connection.release()
-        })
-      }
-    })
-  })
-}
+const query = async (sql, val) => {
+  const [rows] = await pool.query(sql, val);
+  return rows;
+};
 
-module.exports = { query }
+module.exports = { query };
