@@ -2,7 +2,7 @@ import React, { ComponentType, useEffect, useState } from 'react'
 import { Col, Button, Row } from 'antd'
 import { BookOutlined, PieChartOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom'
-import { observer } from 'mobx-react'
+import { observer } from 'mobx-react-lite'
 import useStore from '@/admin/hooks/useStore'
 import http from '@/admin/utils/http'
 
@@ -53,8 +53,8 @@ const Index = (props: any) => {
           <div className="overview__header">
             <div className="description">
               <div className="title">欢迎回来 {username} 老师</div>
-                这是班级近期的状态概览，快点来看一下吧！
-              </div>
+              这是班级近期的状态概览，快点来看一下吧！
+            </div>
             <Button type="primary" size="large" shape="round" onClick={() => userInfoStore.increment()}>修改个人资料</Button>
           </div>
           <Row className="overview__content" type="flex" justify="space-between">
@@ -87,34 +87,34 @@ const Index = (props: any) => {
         <div className="data__container">
           <div className="data__header">
             班级资料
-            </div>
+          </div>
           <Row className="data__content" type="flex" justify="space-between">
             <Col span={7} className="data__wrap">
               <div className="title">
                 <BookOutlined style={{ color: '#66a6ff' }} />
-                  &nbsp;本周考试日程
-                  <div className="description">
+                &nbsp;本周考试日程
+                <div className="description">
                   请提醒学生进行考试哦，以免挂科^_^
-                  </div>
+                </div>
               </div>
               <div className="data__button"><Button type="primary" block>查看更多</Button></div>
             </Col>
             <Col span={7} className="data__wrap">
               <div className="title">
                 <PieChartOutlined style={{ color: '#66a6ff' }} />
-                  &nbsp;学习情况分析
-                  <div className="description">
+                &nbsp;学习情况分析
+                <div className="description">
                   学生最近学习时间的情况分析
-                  </div>
+                </div>
               </div>
             </Col>
             <Col span={7} className="data__wrap">
               <div className="title">
                 <CheckCircleOutlined style={{ color: '#66a6ff' }} />
-                  &nbsp;课程任务列表
-                  <div className="description">
+                &nbsp;课程任务列表
+                <div className="description">
                   以下是您布置的课程任务嘿嘿嘿
-                  </div>
+                </div>
               </div>
               <div className="task__container">
                 <div className="task__wrap">

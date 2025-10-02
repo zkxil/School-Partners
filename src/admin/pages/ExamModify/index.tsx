@@ -17,7 +17,7 @@ import {
   Switch
 } from 'antd';
 import { LoadingOutlined, InfoCircleOutlined, DeleteTwoTone } from '@ant-design/icons';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import http from '@/admin/utils/http'
 import {
   ExamNameRules,
@@ -134,7 +134,7 @@ const ExamModify: FC = () => {
           examType,
           examDifficulty,
           examTimingMode,
-          examTime: timingMode === 1 ? countDown.substr(0, countDown.length - 1) : [moment(startTime), moment(endTime)],
+          examTime: timingMode === 1 ? countDown.substr(0, countDown.length - 1) : [dayjs(startTime), dayjs(endTime)],
           isOpen,
           topicList
         })

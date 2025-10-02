@@ -1,5 +1,5 @@
 import React, { FC, ComponentType, FormEvent, useState, useEffect } from 'react'
-import { observer } from 'mobx-react'
+import { observer } from 'mobx-react-lite'
 
 import useStore from '@/admin/hooks/useStore';
 import http from '@/admin/utils/http'

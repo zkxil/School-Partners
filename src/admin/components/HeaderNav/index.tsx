@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Menu, Dropdown, message } from 'antd'
 import { UserOutlined, SettingOutlined, PoweroffOutlined } from '@ant-design/icons'
-import { observer } from 'mobx-react'
+import { observer } from 'mobx-react-lite'
 
 import useStore from '@/admin/hooks/useStore'
 import './index.scss'
