@@ -12,10 +12,10 @@ import './index.scss'
 
 const DashBoard: React.FC = observer(() => {
   const [isLoading, setIsLoading] = useState(true)
+  const { infoStore: { handleUserLogin, getUserInfo, userInfo } } = useStore()
 
   useEffect(() => {
     const init = async () => {
-      const { infoStore: { handleUserLogin, getUserInfo, userInfo } } = useStore()
       // if (userInfo.avatarUrl !== '') {
       //   setIsLoading(false)
       // }

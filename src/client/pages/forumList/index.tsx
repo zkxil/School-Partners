@@ -9,8 +9,8 @@ import './index.scss'
 
 
 const ForumList: React.FC = observer(() => {
+  const { forumStore: { getForumList } } = useStore()
   useEffect(() => {
-    const { forumStore: { getForumList } } = useStore()
     getForumList()
   }, [])
 

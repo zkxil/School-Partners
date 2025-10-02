@@ -1,5 +1,5 @@
-import React from 'react'
-import Taro, { FC, MutableRefObject, useEffect, useRef, useState } from '@tarojs/taro'
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react'
+import Taro from '@tarojs/taro'
 import { View, Image, Button } from '@tarojs/components'
 import { observer } from 'mobx-react-lite'
 
@@ -58,17 +58,14 @@ const Game: React.FC = observer(() => {
 
 
   useEffect(() => {
-    Taro.connectSocket({
-      url: socketUrl
-    }).then(task => {
-      socketTaskRef.current = task
+    const task = Taro.connectSocket({ url: socketUrl })  // H5 下直接返回 SocketTask
+    socketTaskRef.current = task
 
-      handleSocketOpen()
-      handleSocketMessage()
-    })
+    handleSocketOpen()
+    handleSocketMessage()
 
     return () => {
-      socketTaskRef.current.close()
+      task.close()
     }
   }, [])
 
