@@ -1,50 +1,34 @@
-import React, { ComponentType } from 'react'
-import { Component } from '@tarojs/taro'
+import React, { useState } from 'react'
 import { View } from '@tarojs/components'
-import { observer, inject } from '@tarojs/mobx'
+import { observer } from 'mobx-react-lite'
+import Taro from '@tarojs/taro'
 
-import exerciseStore from '../../../store/exerciseStore'
-
+import { useStore } from '../../../store/index'
 
 import './index.scss'
 
 const { prefix } = require('../../../config/common')
 
 interface IProps {
-  number: number,
-  exerciseStore: exerciseStore
+  number: number
 }
 
-interface IStates {
-  uploadImg: string
-}
+const Options: React.FC<IProps> = observer(({ number }) => {
+  const { exerciseStore } = useStore() // 使用 context 替代 inject
+  const [uploadImg, setUploadImg] = useState('')
 
-@inject('exerciseStore')
-@observer
-class Options extends Component<IProps, IStates> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      uploadImg: ''
-    }
+  const formatNumber = (number: number) => String.fromCharCode(number + 65)
+
+  const onOptionClick = (number: number, index: number) => {
+    exerciseStore.handleOptionClick(number, index)
   }
 
-  formatNumber(number: number): string {
-    return String.fromCharCode(number + 65)
+  const onConfirmClick = () => {
+    exerciseStore.handleConfirmClick()
   }
 
-  onOptionClick(number: number, index: number): void {
-    const { exerciseStore: { handleOptionClick } } = this.props;
-    handleOptionClick(number, index);
-  }
-
-  onConfirmClick(): void {
-    const { exerciseStore: { handleConfirmClick } } = this.props;
-    handleConfirmClick();
-  }
-
-  handleImageUpload(): void {
-    const { number, exerciseStore: { exerciseId } } = this.props;
+  const handleImageUpload = () => {
+    const { exerciseId } = exerciseStore
 
     Taro.chooseImage({
       count: 1,
@@ -52,9 +36,7 @@ class Options extends Component<IProps, IStates> {
         const filePath = res.tempFilePaths[0]
         const openid = Taro.getStorageSync('openid')
 
-        this.setState({
-          uploadImg: filePath
-        })
+        setUploadImg(filePath)
 
         Taro.uploadFile({
           url: `${prefix}/upload`,
@@ -65,60 +47,63 @@ class Options extends Component<IProps, IStates> {
             exerciseId,
             exerciseIndex: number
           },
-          success: (res) => {
-            console.log(res)
-          }
+          success: (res) => console.log(res)
         })
-      },
-      fail: () => {
-
       }
     })
   }
 
-  render() {
-    const { number, exerciseStore: { topicList, optionStatus, fontSize, isFinished, isSubmitted } } = this.props;
-    if (!optionStatus[number] || !topicList[number]) return;
-    const { topicOptions, isUpload = false } = topicList[number];
-    const buttonClassName: string = isUpload || optionStatus[number].some(_ => _ === 1) && !isSubmitted ? 'confirm' : 'confirm hide';
-    const buttonName: string = isFinished ? '完成答题' : '下一题'
-    const optionClassNames = {
-      "-2": "number error",
-      "-1": "number omit",
-      "0": "number",
-      "1": "number active",
-      "2": "number correct"
-    }
-    return (
-      <View className='exam-options'>
-        {!isUpload ? topicOptions.map((topicOption, index) => {
-          const { option, id } = topicOption
-          const optionClassName: string = optionClassNames[optionStatus[number][index]]
+  const { topicList, optionStatus, fontSize, isFinished, isSubmitted } = exerciseStore
+  if (!optionStatus[number] || !topicList[number]) return null
+  const { topicOptions, isUpload = false } = topicList[number]
+
+  const buttonClassName: string =
+    isUpload || optionStatus[number].some(_ => _ === 1) && !isSubmitted
+      ? 'confirm'
+      : 'confirm hide'
+  const buttonName: string = isFinished ? '完成答题' : '下一题'
+
+  const optionClassNames: Record<string, string> = {
+    '-2': 'number error',
+    '-1': 'number omit',
+    '0': 'number',
+    '1': 'number active',
+    '2': 'number correct'
+  }
+
+  return (
+    <View className='exam-options'>
+      {!isUpload ? (
+        topicOptions.map((topicOption, index) => {
+          const { option } = topicOption
+          const optionClassName = optionClassNames[optionStatus[number][index]]
           return (
-            <View className='wrap' key={index} onClick={this.onOptionClick.bind(this, number, index)}>
-              <View className={optionClassName}>{this.formatNumber(index)}</View>
+            <View className='wrap' key={index} onClick={() => onOptionClick(number, index)}>
+              <View className={optionClassName}>{formatNumber(index)}</View>
               <View className={`content ${fontSize}`}>{option}</View>
             </View>
           )
-        }) : (
-          <View className="uploader__container">
-            请在此上传图片:
-            <View className="uploader__wrapper" onClick={this.handleImageUpload.bind(this)}>
-              {!this.state.uploadImg ?
-                <View className="uploader__icon">
-                  +
-                </View> :
-                <View className="uploader__icon uploader__img" style={{ backgroundImage: `url(${this.state.uploadImg})` }}>
-
-                </View>}
-
-            </View>
+        })
+      ) : (
+        <View className='uploader__container'>
+          请在此上传图片:
+          <View className='uploader__wrapper' onClick={handleImageUpload}>
+            {!uploadImg ? (
+              <View className='uploader__icon'>+</View>
+            ) : (
+              <View
+                className='uploader__icon uploader__img'
+                style={{ backgroundImage: `url(${uploadImg})` }}
+              />
+            )}
           </View>
-        )}
-        <View className={buttonClassName} onClick={this.onConfirmClick.bind(this)}>{buttonName}</View>
+        </View>
+      )}
+      <View className={buttonClassName} onClick={onConfirmClick}>
+        {buttonName}
       </View>
-    )
-  }
-}
+    </View>
+  )
+})
 
-export default Options as ComponentType<IProps>
+export default Options

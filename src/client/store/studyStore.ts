@@ -4,7 +4,7 @@ import Taro from '@tarojs/taro'
 import { CourseInfo } from '../modals/courseList'
 import { ExerciseInfo } from '../modals/exerciseList'
 
-class studyStore {
+class StudyStore {
   courseList: Array<CourseInfo> = [];
 
   recommendCourseList: Array<CourseInfo> = [];
@@ -26,38 +26,23 @@ class studyStore {
   }
 
 
-  getCourseList(): any {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const { data } = await Taro.request({
-          url: 'http://localhost:3000/courses',
-          method: 'GET',
-        })
-        this.courseList = data;
-        this.recommendCourseList = data.filter(this.isRecommend)
-        resolve()
-      } catch (e) {
-        reject(e)
-      }
+  async getCourseList(): Promise<void> {
+    const { data } = await Taro.request({
+      url: 'http://localhost:3000/courses',
+      method: 'GET',
     })
+    this.courseList = data;
+    this.recommendCourseList = data.filter(this.isRecommend)
   }
 
-  getExerciseList(): any {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const { data } = await Taro.request({
-          url: 'http://localhost:3000/exercises',
-          method: 'GET',
-        })
-        this.exerciseList = data;
-        this.hotExerciseList = data.filter(this.isHot)
-        resolve()
-      } catch (e) {
-        reject(e)
-      }
-
+  async getExerciseList(): Promise<void> {
+    const { data } = await Taro.request({
+      url: 'http://localhost:3000/exercises',
+      method: 'GET',
     })
+    this.exerciseList = data;
+    this.hotExerciseList = data.filter(this.isHot)
   }
 }
 
-export default studyStore
+export default StudyStore

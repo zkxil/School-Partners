@@ -1,6 +1,7 @@
-import React, { ComponentType } from 'react'
+import React from 'react'
 import Taro, { FC, MutableRefObject, useEffect, useRef, useState } from '@tarojs/taro'
 import { View, Image, Button } from '@tarojs/components'
+import { observer } from 'mobx-react-lite'
 
 const config = require('../../config/common')
 
@@ -9,9 +10,7 @@ const { socketUrl } = config
 import './index.scss'
 import { TopicAnswerRules } from '@/admin/pages/ExamModify/formValidate'
 
-interface IProps {
 
-}
 
 type UserInfo = {
   userName: string,
@@ -23,7 +22,7 @@ const WRONG_ANSWER: number = -1
 const NORMAL_ANSWER: number = 0
 const CORRECT_ANSWER: number = 1
 
-const Game: FC<IProps> = (props: IProps) => {
+const Game: React.FC = observer(() => {
   const [isMyself, setIsMyself] = useState<boolean>(false)
   const [isMatching, setIsMatching] = useState<boolean>(false)
   const [isMatch, setIsMatch] = useState<boolean>(false)
@@ -481,6 +480,6 @@ const Game: FC<IProps> = (props: IProps) => {
       </View>
     </View>
   )
-}
+})
 
-export default Game as ComponentType
+export default Game

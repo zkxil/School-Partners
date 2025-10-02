@@ -1,80 +1,68 @@
-import React, { ComponentType } from 'react'
-import { Component, Config } from '@tarojs/taro'
+import React, { useEffect } from 'react'
+import Taro, { useDidShow, useUnload } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { observer, inject } from '@tarojs/mobx'
+import { observer } from 'mobx-react-lite'
+import { useStore } from '../../store/index'
 import { AtTabs, AtTabsPane } from 'taro-ui'
 
 import Topic from '../../components/Exercise/Topic/index'
 import Options from '../../components/Exercise/Options/index'
 import Status from '../../components/Exercise/Status/index'
 
-import exerciseStore from '../../store/exerciseStore';
-
 import './index.scss'
 
-interface IProps {
-  exerciseStore: exerciseStore
-}
+const Exam: React.FC = observer(() => {
+  useDidShow(() => {
+    // 页面显示时的逻辑
+  })
 
-@inject('exerciseStore')
-@observer
-class Exam extends Component<IProps, {}> {
-
-  config: Config = {
-    navigationBarTitleText: '刷题'
-  }
-
-  constructor(props: IProps) {
-    super(props);
-  }
-
-  async componentDidShow() {
-  }
-
-  componentWillUnmount() {
-    const { exerciseStore: { resetExerciseDetail } } = this.props
+  useUnload(() => {
+    const { exerciseStore: { resetExerciseDetail } } = useStore()
     resetExerciseDetail()
-  }
+  })
 
-
-  switchPage(current: number) {
-    const { exerciseStore: { setCurrentPage } } = this.props;
+  const switchPage = (current: number) => {
+    const { exerciseStore: { setCurrentPage } } = useStore();
     setCurrentPage(current)
   }
 
-  generateTab(): Array<{ title: string }> {
-    const { exerciseStore: { topicList } } = this.props;
+  const generateTab = (): Array<{ title: string }> => {
+    const { exerciseStore: { topicList } } = useStore();
     return Array.from({ length: topicList.length }).map((_, index) => ({ title: (index + 1).toString() }))
   }
 
-  switchFontSize(type: number): void {
-    const { exerciseStore: { fontSizeId, setFontSize } } = this.props;
+  const switchFontSize = (type: number): void => {
+    const { exerciseStore: { fontSizeId, setFontSize } } = useStore();
     setFontSize(fontSizeId + type)
   }
 
-  render() {
-    const { exerciseStore: { currentPage, topicList, theme }, exerciseStore } = this.props;
-    const tabList = this.generateTab();
-    return (
-      <View className={`exam-container ${theme}`}>
-        <AtTabs
-          current={currentPage}
-          scroll
-          tabList={tabList}
-          onClick={this.switchPage.bind(this)}>
-          {topicList.map((_, index) => {
-            return (
-              <AtTabsPane current={currentPage} index={index} key={index}>
-                <Topic number={index} exerciseStore={exerciseStore} />
-                <Options number={index} exerciseStore={exerciseStore} />
-              </AtTabsPane>
-            )
-          })}
-        </AtTabs>
-        <Status />
-      </View>
-    )
-  }
+  const { exerciseStore } = useStore();
+  const { currentPage, topicList, theme } = exerciseStore;
+  const tabList = generateTab();
+
+  return (
+    <View className={`exam-container ${theme}`}>
+      <AtTabs
+        current={currentPage}
+        scroll
+        tabList={tabList}
+        onClick={switchPage}>
+        {topicList.map((_, index) => {
+          return (
+            <AtTabsPane current={currentPage} index={index} key={index}>
+              <Topic number={index} />
+              <Options number={index} />
+            </AtTabsPane>
+          )
+        })}
+      </AtTabs>
+      <Status />
+    </View>
+  )
+})
+
+Exam.config = {
+  navigationBarTitleText: '刷题'
 }
 
-export default Exam as ComponentType
+export default Exam

@@ -3,7 +3,7 @@ import Taro from '@tarojs/taro'
 
 import { ForumInfo } from '../modals/forumList'
 
-class forumStore {
+class ForumStore {
   myForumList: Array<ForumInfo> = []
   forumList: Array<ForumInfo> = []
 
@@ -13,27 +13,24 @@ class forumStore {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  getForumList(forumAuthor?: string) {
-    return new Promise(async (resolve) => {
-      if (forumAuthor) {
-        const { data } = await Taro.request({
-          url: `http://localhost:3000/forums/`,
-          method: 'POST',
-          data: {
-            forumAuthor
-          }
-        })
-        this.myForumList = data.code === 404 ? [] : data
-      } else {
-        const { data } = await Taro.request({
-          url: `http://localhost:3000/forums/`,
-          method: 'GET',
-        })
-        this.forumList = data
-      }
-      resolve()
-    })
+  async getForumList(forumAuthor?: string): Promise<void> {
+    if (forumAuthor) {
+      const { data } = await Taro.request({
+        url: `http://localhost:3000/forums/`,
+        method: 'POST',
+        data: {
+          forumAuthor
+        }
+      })
+      this.myForumList = data.code === 404 ? [] : data
+    } else {
+      const { data } = await Taro.request({
+        url: `http://localhost:3000/forums/`,
+        method: 'GET',
+      })
+      this.forumList = data
+    }
   }
 }
 
-export default forumStore
+export default ForumStore

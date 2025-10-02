@@ -1,34 +1,14 @@
-import React, { ComponentType } from 'react'
-import { Component } from '@tarojs/taro'
+import React from 'react'
 import { View } from '@tarojs/components'
 
 import './index.scss'
 
-interface IProps {
+const Battle: React.FC = () => {
+  return (
+    <View>
+      battle
+    </View>
+  )
 }
 
-interface IState {
-}
-
-class Battle extends Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-    this.state = {
-      value: ''
-    }
-  }
-
-  async componentDidMount() {
-
-  }
-
-  render() {
-    return (
-      <View>
-        battle
-      </View>
-    )
-  }
-}
-
-export default Battle as ComponentType
+export default Battle

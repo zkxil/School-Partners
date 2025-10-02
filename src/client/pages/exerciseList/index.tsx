@@ -1,52 +1,36 @@
-import React, { ComponentType } from 'react'
-import Taro, { Component } from '@tarojs/taro'
+import React, { useEffect, useState } from 'react'
+import Taro from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtSearchBar, AtIcon } from 'taro-ui'
-import { observer, inject } from '@tarojs/mobx'
+import { observer } from 'mobx-react-lite'
+import { useStore } from '../../store/index'
 
 import { ExerciseInfo } from '../../modals/exerciseDetail'
-import exerciseStore from '../../store/exerciseStore'
 
 import './index.scss'
 
-interface IProps {
-  exerciseStore: exerciseStore
-}
+const ExerciseList: React.FC = observer(() => {
+  const [exerciseList, setExerciseList] = useState<Array<ExerciseInfo>>([])
+  const [searchValue, setSearchValue] = useState<string>('')
 
-interface IState {
-  exerciseList: Array<ExerciseInfo>
-  searchValue: string
-}
-
-@inject('exerciseStore')
-@observer
-class CourseList extends Component<IProps, IState>{
-  constructor(props: IProps) {
-    super(props)
-    this.state = {
-      exerciseList: [],
-      searchValue: ''
+  useEffect(() => {
+    const fetchData = async () => {
+      Taro.setNavigationBarTitle({
+        title: '习题列表'
+      })
+      const { data } = await Taro.request({
+        url: 'http://localhost:3000/exercises'
+      })
+      setExerciseList(data)
     }
-    this.handleSearchChange = this.handleSearchChange.bind(this)
+    fetchData()
+  }, [])
+
+  const handleSearchChange = (searchValue: string) => {
+    setSearchValue(searchValue)
   }
 
-  async componentDidMount() {
-    Taro.setNavigationBarTitle({
-      title: '习题列表'
-    })
-    const { data } = await Taro.request({
-      url: 'http://localhost:3000/exercises'
-    })
-    this.setState({
-      exerciseList: data
-    })
-  }
-
-  handleSearchChange(searchValue: string) {
-    this.setState({ searchValue })
-  }
-
-  generateDifficulty(exerciseDifficulty: number): string {
+  const generateDifficulty = (exerciseDifficulty: number): string => {
     const difficultyList = {
       1: '简单',
       2: '中等',
@@ -55,7 +39,7 @@ class CourseList extends Component<IProps, IState>{
     return difficultyList[exerciseDifficulty]
   }
 
-  generateType(exerciseType: number): string {
+  const generateType = (exerciseType: number): string => {
     const typeList = {
       1: '免费',
       2: '会员'
@@ -63,34 +47,31 @@ class CourseList extends Component<IProps, IState>{
     return typeList[exerciseType]
   }
 
-  render() {
-    const { exerciseStore: { getExerciseDetail } } = this.props
-    const { exerciseList, searchValue } = this.state
-    return (
-      <View className="exercise-list">
-        <AtSearchBar
-          value={searchValue}
-          onChange={this.handleSearchChange}
-        />
-        <View className="exercise-list__container">
-          {exerciseList.map(exercise => {
-            const { id, exerciseName, finsihCount, totalCount, exerciseDifficulty, exerciseType } = exercise
-            return (
-              <View className="exercise-list__wrap" key={id} onClick={() => { getExerciseDetail(id) }}>
-                <View className="name">{exerciseName}</View>
-                <View className="status-bar">
-                  {finsihCount}人完成&emsp;共{totalCount}题&emsp;-{this.generateDifficulty(exerciseDifficulty)}-&emsp;
-                  <View className={`type ${exerciseType === 2 ? 'type--charge' : ''}`}>{this.generateType(exerciseType)}</View>
-                </View>
-                <AtIcon className="icon" value='edit' />
+  const { exerciseStore: { getExerciseDetail } } = useStore()
+  return (
+    <View className="exercise-list">
+      <AtSearchBar
+        value={searchValue}
+        onChange={handleSearchChange}
+      />
+      <View className="exercise-list__container">
+        {exerciseList.map(exercise => {
+          const { id, exerciseName, finsihCount, totalCount, exerciseDifficulty, exerciseType } = exercise
+          return (
+            <View className="exercise-list__wrap" key={id} onClick={() => { getExerciseDetail(id) }}>
+              <View className="name">{exerciseName}</View>
+              <View className="status-bar">
+                {finsihCount}人完成&emsp;共{totalCount}题&emsp;-{generateDifficulty(exerciseDifficulty)}-&emsp;
+                <View className={`type ${exerciseType === 2 ? 'type--charge' : ''}`}>{generateType(exerciseType)}</View>
               </View>
-            )
-          })}
+              <AtIcon className="icon" value='edit' />
+            </View>
+          )
+        })}
 
-        </View>
       </View>
-    )
-  }
-}
+    </View>
+  )
+})
 
-export default CourseList as ComponentType
+export default ExerciseList

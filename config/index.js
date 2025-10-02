@@ -47,11 +47,23 @@ const config = {
   },
   // 关键：添加 framework 字段，指定为 'react'
   framework: 'react',
+  // 添加 prebundle 配置
+  prebundle: {
+    enable: false
+  },
+  // 添加 compiler 配置
+  compiler: {
+    type: 'webpack5'
+  },
   // 可以删掉很多小配置
   h5: {
     publicPath: '/',
     staticDirectory: 'static',
     webpackChain(chain, webpack) { },
+    // 添加 prebundle 配置
+    prebundle: {
+      enable: false
+    },
     postcss: {
       autoprefixer: {
         enable: true,

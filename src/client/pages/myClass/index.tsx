@@ -1,37 +1,23 @@
-import React, { ComponentType } from 'react'
-import Taro, { Component } from '@tarojs/taro'
+import React, { useEffect } from 'react'
+import Taro from '@tarojs/taro'
 import { View, Image } from '@tarojs/components'
-
-
+import { observer } from 'mobx-react-lite'
+import { useStore } from '../../store/index'
 
 import './index.scss'
 
-interface IProps {
-}
+const MyClass: React.FC = observer(() => {
+  const store = useStore() // 获取store实例
 
-interface IStates {
-}
+  useEffect(() => {
+    // 组件加载时的逻辑
+  }, [])
 
-class myClass extends Component<IProps, IStates>{
-  constructor(props: IProps) {
-    super(props)
-    this.state = {
+  return (
+    <View className="myclass__container">
+      1
+    </View>
+  )
+})
 
-    }
-  }
-
-  async componentDidMount() {
-
-  }
-
-
-  render() {
-    return (
-      <View className="myclass__container">
-        1
-      </View>
-    )
-  }
-}
-
-export default myClass as ComponentType
+export default MyClass
